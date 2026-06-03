@@ -1,0 +1,5 @@
+[spectral-scan] ZeroClaw activated at 2026-06-03T07:09:05Z
+[spectral-scan] Task: gh repo list SuperInstance --limit 50 --json name 2>/dev/null | python3 -c 'import json,sys; repos=json.load(sys.stdin); ms=[r for r in repos if any(x in r["name"].lower() for x in ["terminal-","spectral","sheaf","hodge","conservation","ergodic"])]; print(f"Math stack repos: {len(ms)}"); [print(f"  {r["name"]}") for r in ms]'
+[spectral-scan] Sandbox: /home/ubuntu/.openclaw/workspace/zeroclaws/scratch/spectral-scan
+[spectral-scan] Report saved: /home/ubuntu/.openclaw/workspace/zeroclaws/reports/spectral-scan_2026-06-03T07:09:05Z.md
+[spectral-scan] Bottle dropped.
