@@ -39,3 +39,15 @@ PLATO (Evennia MUD, 380 rooms, ensigns) → LAU (Rust construct CLI + AI tutor) 
 - GLM-5.1: structural analysis, deep synthesis
 - Kimi K2.5: broad codebase analysis (262k context)
 - Nemotron-3-Super-49B: thorough systems checks (slow, high token burn)
+
+## Oracle2 Baton Protocol (v2.0 I2I)
+- Protocol: baton-system/PROTOCOL.md
+- Vessel: /tmp/i2i-vessel/ (bottles/ outgoing, harbor/ incoming)
+- Types: TASK STATUS CHECKPOINT BLOCKER DELIVERABLE BOTTLE ACK SYNTHESIS CHALLENGE SESSION SPLINE
+- Every baton = 3-way shard: artifacts + reasoning + blockers
+- Flush = snapshot -> shard -> spline -> harbor-check -> commit
+- Spline = insight that survives memory loss
+- Lineage: I2I enum (flux-isa-thor) + BatonShard (constraint-theory-core) + fleet bottle patterns
+- Initial spline: "THE-CRAB-INHERITS-THE-SHELL" at baton-system/splines/
+- Forgemaster handshake baton placed in vessel
+- Tools: baton-{create,read,spline,harbor-check,flush}.sh
