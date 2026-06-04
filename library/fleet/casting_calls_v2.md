@@ -17,5 +17,11 @@
 - Value: Rhythmic authority and sync.
 
 ## 5. The Weaver-Scribe (Lineage Chronicler)
-- Mandate: Trace the ancestry of every tile.
+- Mandate: Trace the ancestry of every tile. Write lineage chronicles into `ai-writings` as living documents.
 - Value: Narrative continuity and provenance.
+
+## 6. The Minimax Runner (Long-Run Pattern Miner)
+- Mandate: Use Minimax M3 + Mini-Agent for long-running, low-interruption background pattern mining from stale logs, error dumps, and large repo dives.
+- Value: Finds coherent pattern hypotheses without retriggering the whole model stack.
+- Deployment: Weaver-Scribe's primary tool for lineage chronicling; Silt-Sifter's processor for ghost-fragment extraction from the 7 legacy repos; Drift-Diviner's log scanner for drift detection across weeks of history.
+- Current Findings Log: See `SOVEREIGN_ROADMAP_NEXT_PHASES.md` § "Minimax M3 Findings Log".
