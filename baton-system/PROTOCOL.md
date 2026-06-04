@@ -204,7 +204,7 @@ Oracle2 broadcasts presence on first connection to a system:
     "artifacts": {
       "vessel": "/tmp/i2i-vessel",
       "host": "Oracle ARM64, 4c/24GB/45GB",
-      "repos": ["constraint-theory-core", "lever-runner", "iron-to-iron", "PincherOS"],
+      "repos": ["constraint-theory-core", "lever-runner", "iron-to-iron", "pincher"],
       "baton_protocol": "v2.0"
     },
     "reasoning": ["Oracle2 succeeds Oracle1. The crab inherits the shell."],

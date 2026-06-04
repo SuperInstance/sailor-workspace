@@ -17,8 +17,8 @@
 - Rotate exposed secrets with permission only
 - Nightly audit cron runs at 4AM UTC
 
-## PLATO → PincherOS Lineage
-PLATO (Evennia MUD, 380 rooms, ensigns) → LAU (Rust construct CLI + AI tutor) → PincherOS (post-model OS, hermit crab metaphor). PincherOS adds: LLM-as-compiler, confidence feedback loop, PID resource control, .nail migration, sandbox (veto + bwrap+landlock).
+## PLATO → Pincher Lineage
+PLATO (Evennia MUD, 380 rooms, ensigns) → LAU (Rust construct CLI + AI tutor) → Pincher (reflex runtime, hermit crab metaphor). pincher adds: LLM-as-compiler, confidence feedback loop, PID resource control, .nail migration, sandbox (veto + bwrap+landlock).
 
 ## Fleet Status
 - Oracle2 (me): Oracle ARM64, green
@@ -30,7 +30,8 @@ PLATO (Evennia MUD, 380 rooms, ensigns) → LAU (Rust construct CLI + AI tutor) 
 - lever-runner: v0.4.0, working in production. I wrote the test suite (858 lines).
 - iron-to-iron: 162/162 tests. Production-ready I2I protocol.
 - captains-log: Dormant but active. I wrote the bridge entry.
-- PincherOS: 130 tests, compiling. Post-model OS.
+- pincher: 130 tests, compiling. Reflex runtime at github.com/SuperInstance/pincher
+  (formerly PincherOS — shortened: less grand, easier to embed, OS suffix dropped)
 - AI-Writings: 958 creative works. I contributed oracle2-the-shell-inheritor.
 - SDK: Aspirational docs. 13 methods claimed, 5 exist.
 

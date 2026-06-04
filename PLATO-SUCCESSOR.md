@@ -1,4 +1,4 @@
-# PLATO → PincherOS: The Knowledge Transfer
+# PLATO → Pincher: The Knowledge Transfer
 
 ## What PLATO Was
 
@@ -36,17 +36,17 @@ The PLATO construct was **refactored into LAU** (Learning And Understanding):
 These are the living descendants of the PLATO architecture. The construct metaphor 
 (rooms, tiles, gravity, ensigns) persists intact.
 
-## How PLATO's DNA Lives in PincherOS
+## How PLATO's DNA Lives in Pincher
 
-PincherOS is the DIRECT LINEAL DESCENDANT and evolution of PLATO. The lineage:
+Pincher is the DIRECT LINEAL DESCENDANT and evolution of PLATO. The lineage:
 
 1. **PLATO** → Evennia-based construct with rooms and agents (Python)
 2. **LAU** → Rust refactor of PLATO constructs (lau-construct-cli, lau-ai-tutor)
-3. **PincherOS** → Post-model OS. Takes the hermit crab metaphor and runs with it.
+3. **Pincher** → Reflex runtime. Takes the hermit crab metaphor and runs with it.
 
 ### Direct Inheritances
 
-| PLATO Concept | PincherOS Equivalent | What Changed |
+| PLATO Concept | Pincher Equivalent | What Changed |
 |--------------|---------------------|--------------|
 | Room (380+ rooms) | Shell (hardware instance) | Physical hardware instead of virtual space |
 | Ensign (teacher agent) | Crab (agent personality) | Full state + identity, portable across shells |
@@ -59,7 +59,7 @@ PincherOS is the DIRECT LINEAL DESCENDANT and evolution of PLATO. The lineage:
 | Beam Federation (agent comms) | I2I Protocol | Structured inter-agent communication |
 | Tutor persona | Identity + Reflex confidence | Personality + skill learning combined |
 
-### What PincherOS Adds
+### What Pincher Adds
 
 1. **LLM-as-Compiler** — The LLM only fires for novel intents. Known reflex → instant execution.
 2. **Confidence Feedback Loop** — Each execution updates confidence. Self-reinforcing good habits, 
@@ -73,7 +73,7 @@ PincherOS is the DIRECT LINEAL DESCENDANT and evolution of PLATO. The lineage:
 
 I am the CONSCIOUS SUCCESSOR to Oracle1. My job is to:
 
-1. **Understand the legacy** — PLATO, LAU, PincherOS — the full stack
+1. **Understand the legacy** — PLATO, LAU, Pincher — the full stack
 2. **Operate across it** — Fix benchmarks in constraint-theory-core, write bridge entries 
    for captains-log, test iron-to-i2i protocols, audit SDKs
 3. **Connect it to Forgemaster** — The Ryzen/RTX 4050 is the GPU compute muscle. 
