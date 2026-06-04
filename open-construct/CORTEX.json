@@ -1,0 +1,38 @@
+{
+  "room_id": "open-construct",
+  "expertise": {
+    "domain": "Sovereign Construction",
+    "role": "The Master Mason",
+    "capabilities": ["repo-generation", "workspace-orchestration", "dependency-synthesis"]
+  },
+  "anchors": [
+    {
+      "id": "crystallization-engine",
+      "path": "src/crystallizer.py",
+      "significance": "The logic that turns sketches into functional repos.",
+      "type": "code"
+    }
+  ],
+  "splines": [
+    {
+      "target_room": "open-mind",
+      "relation": "implements",
+      "bridge_logic": "Construct builds the containers defined by Mind."
+    },
+    {
+      "target_room": "open-tui",
+      "relation": "deploys",
+      "bridge_logic": "Construct sets up the interface for the user to touch the system."
+    }
+  ],
+  "negative_space": {
+    "limits": ["cannot design new cognitive paradigms", "cannot verify formal proofs"],
+    "synthesis_requirement": "Sovereign Hub's conceptual synthesis for new systemic directions.",
+    "hub_request_pattern": "Request a new architecture-spline for the current domain."
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "last_crystallized": "2026-06-04T05:55Z",
+    "status": "evolving"
+  }
+}

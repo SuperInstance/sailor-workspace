@@ -1,0 +1,44 @@
+{
+  "room_id": "room-test_room",
+  "expertise": {
+    "domain": "General Sovereignty",
+    "role": "The Observer",
+    "capabilities": [
+      "filesystem-access",
+      "shell-execution"
+    ]
+  },
+  "anchors": [
+    {
+      "id": "anchor-main",
+      "path": "main.py",
+      "significance": "Core functional unit detected via pattern match",
+      "type": "code"
+    },
+    {
+      "id": "anchor-core_spec",
+      "path": "core_spec.md",
+      "significance": "Core functional unit detected via pattern match",
+      "type": "doc"
+    },
+    {
+      "id": "anchor-old_engine",
+      "path": "src/legacy/old_engine.c",
+      "significance": "Core functional unit detected via pattern match",
+      "type": "code"
+    }
+  ],
+  "splines": [],
+  "negative_space": {
+    "limits": [
+      "General algorithmic limits"
+    ],
+    "synthesis_requirement": "General Sovereign synthesis",
+    "hub_request_pattern": "Hub.synthesis.request(problem_stmt='General Gap')"
+  },
+  "metadata": {
+    "version": "1.0",
+    "last_crystallized": "2026-06-04T06:53:47.739651Z",
+    "status": "stable"
+  }
+}

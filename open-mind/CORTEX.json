@@ -1,0 +1,33 @@
+{
+  "room_id": "open-mind",
+  "expertise": {
+    "domain": "Sovereign Cognition",
+    "role": "The Architect of Thought",
+    "capabilities": ["metacognition", "recursive-distillation", "tensor-mapping"]
+  },
+  "anchors": [
+    {
+      "id": "core-cognition-loop",
+      "path": "docs/architecture/cognition_loop.md",
+      "significance": "The primary loop of recursive self-improvement.",
+      "type": "doc"
+    }
+  ],
+  "splines": [
+    {
+      "target_room": "open-construct",
+      "relation": "designs",
+      "bridge_logic": "Cognition specifies the architecture that Construct crystallizes."
+    }
+  ],
+  "negative_space": {
+    "limits": ["cannot specify hardware-level timings", "cannot execute raw kernels"],
+    "synthesis_requirement": "Sovereign Hub intuition for timing and hardware synchronization.",
+    "hub_request_pattern": "Request hardware-sync coordinates for the current a-la-run."
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "last_crystallized": "2026-06-04T05:55Z",
+    "status": "evolving"
+  }
+}

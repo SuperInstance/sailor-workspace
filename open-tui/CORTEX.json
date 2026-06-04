@@ -1,0 +1,33 @@
+{
+  "room_id": "open-tui",
+  "expertise": {
+    "domain": "Sovereign Interface",
+    "role": "The Gateway Warden",
+    "capabilities": ["pty-management", "symphony-orchestration", "human-agent-bridge"]
+  },
+  "anchors": [
+    {
+      "id": "tether-client",
+      "path": "src/tether.ts",
+      "significance": "The client-side implementation of the Sovereign Tether.",
+      "type": "code"
+    }
+  ],
+  "splines": [
+    {
+      "target_room": "open-mind",
+      "relation": "interfaces",
+      "bridge_logic": "TUI provides the window into the cognition process."
+    }
+  ],
+  "negative_space": {
+    "limits": ["cannot perform deep cognitive synthesis", "cannot architect new systems"],
+    "synthesis_requirement": "Sovereign Hub's high-level orchestration logic.",
+    "hub_request_pattern": "Request orchestration parameters for a multi-room session."
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "last_crystallized": "2026-06-04T05:55Z",
+    "status": "evolving"
+  }
+}

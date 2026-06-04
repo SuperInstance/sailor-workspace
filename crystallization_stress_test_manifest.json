@@ -1,0 +1,106 @@
+{
+  "suite_name": "Sovereign-Construct: Crystallization Engine Stress Test",
+  "version": "1.0.0",
+  "test_cases": [
+    {
+      "id": "EC-01-MASSIVE-SPLINE",
+      "category": "Scale/Performance",
+      "description": "Testing the generator's ability to handle extreme linear extension without float precision errors or segment collapse.",
+      "room_definition": {
+        "name": "The Infinite Corridor of Echoes",
+        "geometry": {
+          "type": "spline",
+          "points": [
+            {"x": 0, "y": 0, "z": 0},
+            {"x": 100000, "y": 0, "z": 0},
+            {"x": 100000, "y": 100000, "z": 0},
+            {"x": 0, "y": 100000, "z": 0},
+            {"x": 0, "y": 0, "z": 100000}
+          ],
+          "segment_detail": "ultra-high",
+          "width": 2,
+          "height": 5
+        },
+        "anchors": [
+          {"pos": [0, 0, 0], "type": "origin"},
+          {"pos": [0, 0, 100000], "type": "terminus"}
+        ]
+      }
+    },
+    {
+      "id": "EC-02-CIRCULAR-DEPENDENCY",
+      "category": "Topology/Logic",
+      "description": "Testing for infinite recursion in spatial resolution where Room A depends on Room B, which depends on Room A.",
+      "room_definition": {
+        "name": "The Ouroboros Atrium",
+        "geometry": {
+          "type": "circular",
+          "radius": 50
+        },
+        "spatial_logic": {
+          "dependents": ["EC-03-MIRROR-SQUARE"],
+          "anchor_loop": true,
+          "recursive_depth_limit": 0
+        },
+        "anchors": [
+          {"pos": [0, 0, 0], "type": "core_singularity"}
+        ]
+      }
+    },
+    {
+      "id": "EC-03-MIRROR-SQUARE",
+      "category": "Topology/Logic",
+      "description": "The reciprocal of EC-02. If the engine fails to break the loop, the generation process should hang or crash.",
+      "room_definition": {
+        "name": "The Echo Chamber",
+        "geometry": {
+          "type": "cube",
+          "size": 100
+        },
+        "spatial_logic": {
+          "dependents": ["EC-02-CIRCULAR-DEPENDENCY"],
+          "anchor_loop": true
+        },
+        "anchors": [
+          {"pos": [0, 0, 0], "type": "origin"}
+        ]
+      }
+    },
+    {
+      "id": "EC-04-NON-STANDARD-ANCHORS",
+      "category": "Anchor System",
+      "description": "Testing anchors placed at irrational coordinates or extremely offset from the room's bounding box to test alignment logic.",
+      "room_definition": {
+        "name": "The Disjointed Vault",
+        "geometry": {
+          "type": "irregular_polyhedron",
+          "vertices": [[0,0,0], [10,0,0], [0,10,0], [0,0,10]]
+        },
+        "anchors": [
+          {"pos": [Math.PI * 1000, Math.E * 1000, -999999], "type": "remote_anchor_alpha"},
+          {"pos": [0.0000000001, 0.0000000001, 0.0000000001], "type": "micro_anchor_beta"}
+        ]
+      }
+    },
+    {
+      "id": "EC-05-FRACTAL-NESTING",
+      "category": "Complexity",
+      "description": "Testing the engine's ability to generate nested rooms of decreasing scale (Russian Doll effect) to check for vertex merging and z-fighting.",
+      "room_definition": {
+        "name": "The Recursive Sanctum",
+        "geometry": {
+          "type": "sphere",
+          "radius": 100
+        },
+        "nesting": {
+          "depth": 50,
+          "scale_factor": 0.5,
+          "rotation_offset": 45
+        },
+        "anchors": [
+          {"pos": [0, 0, 0], "type": "center"}
+        ]
+      }
+    }
+  ]
+}
