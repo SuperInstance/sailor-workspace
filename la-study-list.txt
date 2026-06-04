@@ -1,0 +1,7 @@
+https://github.com/SuperInstance/spreadsheet-moment-proto
+https://github.com/SuperInstance/spreadsheet-projection
+https://github.com/SuperInstance/Equipment-CellLogic-Distiller
+https://github.com/SuperInstance/Spreadsheet-ai
+https://github.com/SuperInstance/seed-ui
+https://github.com/SuperInstance/Spreadsheet-moment
+https://github.com/SuperInstance/SuperInstance-Starter-Agent
