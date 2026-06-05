@@ -191,3 +191,43 @@ scripts/promote-reflex.sh "My New Reflex" \
 ```
 
 === Reflex ε promoted via Reflex ε — 2026-06-05 01:17 UTC ===
+
+
+---
+
+## Reflex ζ — The Dedup Reflex
+
+**Trigger:** Two or more reflexes share overlapping trigger patterns or action chains. Reflex scan takes longer than expected due to near-identical matches.
+
+**Reflex:**
+1. SCAN:  Parse all reflexes from COGNITIVE_REFLEXES.md 2. TOKENIZE: Key words from each reflex's trigger + action into sorted unique token sets 3. COMPARE: Jaccard similarity for trigger keywords, action keywords, combined (60/40 weight) 4. FLAG:  Overlap ≥60% → merge candidate. Report to SESSION-STATE.md 5. MERGE: With --merge flag, auto-merge overlapping trigger patterns into combined reflex 6. PERSIST: Update COGNITIVE_REFLEXES.md, SESSION-STATE.md, CONTEXT.md
+
+**Taxonomy:**
+Jaccard similarity on keyword tokens (trigger 60% + action 40% weighted). Pairwise comparison of all  reflexes = O(^2). Merge candidates flagged at ≥60% combined overlap.
+
+**Why it works:** Without dedup, overlapping reflexes waste match time. With 5 reflexes the cost is negligible; with 50+ it becomes a real bottleneck. Dedup ensures the reflex library stays sparse and efficient as it grows.
+
+**Object permanence:** Encoded in COGNITIVE_REFLEXES.md (durable).
+Promotion metadata in SESSION-STATE.md (checkpoint).
+
+=== Promoted via Reflex ε — 2026-06-05 01:49 UTC ===
+
+
+---
+
+## Reflex η — The Archive GC Reflex
+
+**Trigger:** memory/archive/ or CONTEXT.md archive has files older than retention policy. Disk space running low.
+
+**Reflex:**
+1. SCAN: Find all .md files in memory/archive/ 2. CHECK: For each file, compute age from mtime 3. DECIDE: age < KEEP_DAYS → keep. filename matches YYYY-MM-01 or CONTEXT-YYYY-MM-01 → keep (monthly). otherwise → prune 4. PRUNE: Delete pruned files. Report count and bytes freed. 5. PERSIST: Log GC results to archive-gc-log.md
+
+**Taxonomy:**
+Three-tier retention: keep last 30 days (hot), keep first-of-month files (warm, monthly snapshots), prune everything else (cold).
+
+**Why it works:** Without archive GC, memory/archive/ grows unbounded. Each session creates a new CONTEXT.md archive. After 365 days, both the directory scan and token budget suffer.
+
+**Object permanence:** Encoded in COGNITIVE_REFLEXES.md (durable).
+Promotion metadata in SESSION-STATE.md (checkpoint).
+
+=== Promoted via Reflex ε — 2026-06-05 01:51 UTC ===

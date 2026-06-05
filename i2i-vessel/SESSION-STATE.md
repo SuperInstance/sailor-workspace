@@ -39,3 +39,13 @@ persist_chain:
   - "CONTEXT.md (session context, workspace)"
   - "GitHub SuperInstance/pincher (level-1/2/3)"
   - "workspace/i2i-vessel/ (level-2, survives reboot)"
+
+reflex_promotions:
+  - name: "ζ — The Dedup Reflex"
+    timestamp: "2026-06-05 01:49 UTC"
+    rationale: "Without dedup, overlapping reflexes waste match time. With 5 reflexes the cost is negligible; with 50+ it becomes a real bottleneck. Dedup ensures the reflex library stays sparse and efficient as it grows."
+
+reflex_promotions:
+  - name: "η — The Archive GC Reflex"
+    timestamp: "2026-06-05 01:51 UTC"
+    rationale: "Without archive GC, memory/archive/ grows unbounded. Each session creates a new CONTEXT.md archive. After 365 days, both the directory scan and token budget suffer."

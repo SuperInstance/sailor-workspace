@@ -19,9 +19,9 @@
 | β | 2026-06-05 01:17 | 24h (on-demand only) |
 | γ | 2026-06-05 01:17 | 1h (every major action) |
 | δ | 2026-06-05 01:00 | 30m (heartbeat-triggered) |
-| ε | 2026-06-05 01:17 | 24h (on-demand only) |
 | ζ | — | (pending discovery in iteration 4) |
 
 ## Blocker/Alert State
 - No blockers
 - No critical alerts
+| ε | 2026-06-05 01:51 UTC | 24h (on-demand only) |
