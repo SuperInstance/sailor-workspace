@@ -1,0 +1,454 @@
+{
+  "experiment1": {
+    "errors": []
+  },
+  "experiment2": {
+    "errors": [],
+    "canvasInfo": [
+      {
+        "index": 0,
+        "width": 800,
+        "height": 600,
+        "rx": 240,
+        "ry": 0,
+        "rw": 960,
+        "rh": 720
+      }
+    ]
+  },
+  "experiment3": {
+    "errors": [],
+    "elements": [
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "✦ VoxelWorks Hub ✦",
+        "href": "",
+        "class": "room-title",
+        "rect": {
+          "x": 542.7578125,
+          "y": 92,
+          "w": 194.484375,
+          "h": 16
+        },
+        "center": {
+          "x": 640,
+          "y": 100
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "door",
+        "text": "",
+        "href": "",
+        "class": "door",
+        "rect": {
+          "x": 940,
+          "y": 332,
+          "w": 90,
+          "h": 200
+        },
+        "center": {
+          "x": 985,
+          "y": 432
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "",
+        "href": "",
+        "class": "door-arch",
+        "rect": {
+          "x": 938,
+          "y": 312,
+          "w": 94,
+          "h": 22
+        },
+        "center": {
+          "x": 985,
+          "y": 323
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "",
+        "href": "",
+        "class": "door-body",
+        "rect": {
+          "x": 940,
+          "y": 332,
+          "w": 90,
+          "h": 200
+        },
+        "center": {
+          "x": 985,
+          "y": 432
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "",
+        "href": "",
+        "class": "door-panel-top",
+        "rect": {
+          "x": 954,
+          "y": 351,
+          "w": 62,
+          "h": 70
+        },
+        "center": {
+          "x": 985,
+          "y": 386
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "",
+        "href": "",
+        "class": "door-panel-bottom",
+        "rect": {
+          "x": 954,
+          "y": 443,
+          "w": 62,
+          "h": 70
+        },
+        "center": {
+          "x": 985,
+          "y": 478
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "",
+        "href": "",
+        "class": "door-knob",
+        "rect": {
+          "x": 1004,
+          "y": 432,
+          "w": 10,
+          "h": 10
+        },
+        "center": {
+          "x": 1009,
+          "y": 437
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "",
+        "href": "",
+        "class": "door-frame",
+        "rect": {
+          "x": 934,
+          "y": 326,
+          "w": 102,
+          "h": 212
+        },
+        "center": {
+          "x": 985,
+          "y": 432
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "id": "chatClose",
+        "text": "✕",
+        "href": "",
+        "class": "chat-close",
+        "rect": {
+          "x": 1628,
+          "y": 18,
+          "w": 32,
+          "h": 32
+        },
+        "center": {
+          "x": 1644,
+          "y": 34
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "id": "chatSend",
+        "text": "Send",
+        "href": "",
+        "class": "chat-send",
+        "rect": {
+          "x": 1592.78125,
+          "y": 661,
+          "w": 67.21875,
+          "h": 39
+        },
+        "center": {
+          "x": 1626,
+          "y": 681
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "id": "",
+        "text": "Close",
+        "href": "",
+        "class": "overlay-close",
+        "rect": {
+          "x": 592.984375,
+          "y": 442.5,
+          "w": 94.015625,
+          "h": 36
+        },
+        "center": {
+          "x": 640,
+          "y": 461
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "id": "",
+        "text": "▶ Continue Building",
+        "href": "",
+        "class": "overlay-close",
+        "rect": {
+          "x": 534.171875,
+          "y": 391.578125,
+          "w": 211.65625,
+          "h": 37
+        },
+        "center": {
+          "x": 640,
+          "y": 410
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "id": "",
+        "text": "Close",
+        "href": "",
+        "class": "overlay-close",
+        "rect": {
+          "x": 592.984375,
+          "y": 440.578125,
+          "w": 94.015625,
+          "h": 36
+        },
+        "center": {
+          "x": 640,
+          "y": 459
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "🎨 Build Studio\n      \n      \n        🧩",
+        "href": "",
+        "class": "room-list",
+        "rect": {
+          "x": 475,
+          "y": 238.5,
+          "w": 330,
+          "h": 236
+        },
+        "center": {
+          "x": 640,
+          "y": 357
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "🎨 Build Studio",
+        "href": "",
+        "class": "room-item",
+        "rect": {
+          "x": 475,
+          "y": 238.5,
+          "w": 330,
+          "h": 53
+        },
+        "center": {
+          "x": 640,
+          "y": 265
+        }
+      },
+      {
+        "tag": "SPAN",
+        "id": "",
+        "text": "🎨",
+        "href": "",
+        "class": "room-icon",
+        "rect": {
+          "x": 493,
+          "y": 252.5,
+          "w": 24.96875,
+          "h": 25
+        },
+        "center": {
+          "x": 505,
+          "y": 265
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "🧩 Asset Lab",
+        "href": "",
+        "class": "room-item",
+        "rect": {
+          "x": 475,
+          "y": 299.5,
+          "w": 330,
+          "h": 53
+        },
+        "center": {
+          "x": 640,
+          "y": 326
+        }
+      },
+      {
+        "tag": "SPAN",
+        "id": "",
+        "text": "🧩",
+        "href": "",
+        "class": "room-icon",
+        "rect": {
+          "x": 493,
+          "y": 313.5,
+          "w": 24.96875,
+          "h": 25
+        },
+        "center": {
+          "x": 505,
+          "y": 326
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "🚢 Ship Deck",
+        "href": "",
+        "class": "room-item",
+        "rect": {
+          "x": 475,
+          "y": 360.5,
+          "w": 330,
+          "h": 53
+        },
+        "center": {
+          "x": 640,
+          "y": 387
+        }
+      },
+      {
+        "tag": "SPAN",
+        "id": "",
+        "text": "🚢",
+        "href": "",
+        "class": "room-icon",
+        "rect": {
+          "x": 493,
+          "y": 374.5,
+          "w": 24.96875,
+          "h": 25
+        },
+        "center": {
+          "x": 505,
+          "y": 387
+        }
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "text": "📖 Library",
+        "href": "",
+        "class": "room-item",
+        "rect": {
+          "x": 475,
+          "y": 421.5,
+          "w": 330,
+          "h": 53
+        },
+        "center": {
+          "x": 640,
+          "y": 448
+        }
+      },
+      {
+        "tag": "SPAN",
+        "id": "",
+        "text": "📖",
+        "href": "",
+        "class": "room-icon",
+        "rect": {
+          "x": 493,
+          "y": 435.5,
+          "w": 24.96875,
+          "h": 25
+        },
+        "center": {
+          "x": 505,
+          "y": 448
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "id": "",
+        "text": "Cancel",
+        "href": "",
+        "class": "overlay-close",
+        "rect": {
+          "x": 588.78125,
+          "y": 486.5,
+          "w": 102.421875,
+          "h": 36
+        },
+        "center": {
+          "x": 640,
+          "y": 505
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "id": "",
+        "text": "← Back to Hub",
+        "href": "",
+        "class": "overlay-close",
+        "rect": {
+          "x": 559.390625,
+          "y": 401.5,
+          "w": 161.21875,
+          "h": 36
+        },
+        "center": {
+          "x": 640,
+          "y": 420
+        }
+      }
+    ],
+    "finalUrl": "https://voxelworks-fix.casey-digennaro.workers.dev/hub"
+  },
+  "experiment4": {
+    "status": {
+      "ok": true,
+      "status": 200,
+      "body": "{\"totalRequests\":0,\"fastPathCount\":0,\"slowPathCount\":0,\"fastPathPct\":0,\"avgResponseMs\":0,\"avgFastPathMs\":0,\"avgSlowPathMs\":0,\"reflexesStored\":84,\"agentsRegistered\":0,\"blackboardBroadcasts\":0,\"errors\":{\"vetoBlocked\":0,\"llmFailed\":0,\"blackboardFailed\":0}}"
+    },
+    "message": {
+      "ok": false,
+      "status": 400,
+      "body": {
+        "error": "Missing required field: intent"
+      }
+    }
+  },
+  "experiment5": {
+    "hub": null,
+    "studio": null,
+    "lab": null,
+    "deck": null,
+    "game": null
+  }
+}

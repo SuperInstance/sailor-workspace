@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --fleet-bg: #0a0a12;
+  --fleet-surface: #12121e;
+  --fleet-border: #1e1e30;
+  --fleet-accent: #a855f7;
+  --fleet-accent-dim: #7c3aed;
+  --fleet-success: #22c55e;
+  --fleet-warning: #eab308;
+  --fleet-error: #ef4444;
+  --fleet-muted: #6b7280;
+  --fleet-text: #e2e8f0;
+  --fleet-text-dim: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--fleet-bg);
+  color: var(--fleet-text);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--fleet-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--fleet-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fleet-muted);
+}
+
+/* CopilotKit overrides for fleet theme */
+.copilotkit-chat {
+  --copilotkit-bg-primary: var(--fleet-bg) !important;
+  --copilotkit-bg-secondary: var(--fleet-surface) !important;
+  --copilotkit-text-primary: var(--fleet-text) !important;
+  --copilotkit-text-secondary: var(--fleet-text-dim) !important;
+  --copilotkit-accent: var(--fleet-accent) !important;
+  --copilotkit-border: var(--fleet-border) !important;
+  --copilotkit-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  --copilotkit-radius: 12px !important;
+}
+
+/* Status indicator dots */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.online {
+  background: var(--fleet-success);
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+}
+
+.status-dot.degraded {
+  background: var(--fleet-warning);
+  box-shadow: 0 0 6px rgba(234, 179, 8, 0.5);
+}
+
+.status-dot.offline {
+  background: var(--fleet-muted);
+}
+
+.status-dot.error {
+  background: var(--fleet-error);
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.status-dot.online.active {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Quick action buttons */
+.quick-action-btn {
+  @apply px-3 py-1.5 text-xs font-medium rounded-lg border transition-all duration-200;
+  background: var(--fleet-surface);
+  border-color: var(--fleet-border);
+  color: var(--fleet-text-dim);
+}
+
+.quick-action-btn:hover {
+  background: rgba(168, 85, 247, 0.1);
+  border-color: var(--fleet-accent-dim);
+  color: var(--fleet-text);
+}
+
+.quick-action-btn:active {
+  transform: scale(0.97);
+}
+
+/* Sidebar */
+.sidebar-section {
+  @apply rounded-xl p-3;
+  background: var(--fleet-surface);
+  border: 1px solid var(--fleet-border);
+}
+
+/* Message animations */
+@keyframes message-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-enter {
+  animation: message-in 0.3s ease-out;
+}

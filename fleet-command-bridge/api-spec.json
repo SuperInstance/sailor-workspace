@@ -1,0 +1,456 @@
+{
+  "openrpc": "1.0.0",
+  "info": {
+    "title": "Fleet Command Bridge API",
+    "version": "1.0.0",
+    "description": "JSON-RPC 2.0 API for the kimi-swarm frontend to communicate with pincher reflex runtime and polychora temporal world",
+    "contact": {
+      "name": "Fleet Bridge Engineer"
+    }
+  },
+  "servers": [
+    {
+      "name": "WebSocket",
+      "url": "ws://localhost:9876/ws",
+      "description": "Primary WebSocket endpoint for real-time bidirectional communication"
+    },
+    {
+      "name": "Health",
+      "url": "http://localhost:9876/health",
+      "description": "HTTP health check endpoint"
+    }
+  ],
+  "methods": [
+    {
+      "name": "fleet.ping",
+      "summary": "Basic health check for the bridge",
+      "params": [],
+      "result": {
+        "name": "PongResponse",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "pong": {"type": "boolean", "const": true},
+            "server_time": {"type": "integer", "description": "Unix timestamp"},
+            "fleet_version": {"type": "string"},
+            "uptime_secs": {"type": "integer"},
+            "backends": {
+              "type": "object",
+              "properties": {
+                "pincher": {"type": "string", "enum": ["connected", "disconnected", "error"]},
+                "polychora": {"type": "string", "enum": ["connected", "disconnected", "error"]}
+              }
+            }
+          },
+          "required": ["pong", "server_time", "fleet_version", "backends"]
+        }
+      }
+    },
+    {
+      "name": "fleet.status",
+      "summary": "Get comprehensive fleet status",
+      "params": [],
+      "result": {
+        "name": "FleetStatus",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "bridge_state": {"type": "string", "enum": ["connected", "connecting", "disconnected"]},
+            "agent_count": {"type": "integer"},
+            "active_reflexes": {"type": "integer"},
+            "room_count": {"type": "integer"},
+            "tile_count": {"type": "integer"},
+            "voxel_world_tick": {"type": "integer"},
+            "backend_health": {
+              "type": "object",
+              "properties": {
+                "pincher": {"$ref": "#/components/schemas/BackendHealth"},
+                "polychora": {"$ref": "#/components/schemas/BackendHealth"}
+              }
+            }
+          },
+          "required": ["bridge_state", "agent_count", "active_reflexes", "backend_health"]
+        }
+      }
+    },
+    {
+      "name": "fleet.backend_status",
+      "summary": "Check a specific backend health",
+      "params": [
+        {"name": "backend", "schema": {"type": "string", "enum": ["pincher", "polychora"]}, "required": true}
+      ],
+      "result": {
+        "name": "BackendStatusResponse",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "backend": {"type": "string"},
+            "status": {"type": "string", "enum": ["ok", "error", "unavailable"]},
+            "details": {"type": "object"}
+          },
+          "required": ["backend", "status"]
+        }
+      }
+    },
+    {
+      "name": "reflex.list",
+      "summary": "List all registered reflexes",
+      "params": [
+        {"name": "limit", "schema": {"type": "integer", "default": 50, "maximum": 1000}},
+        {"name": "offset", "schema": {"type": "integer", "default": 0}}
+      ],
+      "result": {
+        "name": "ReflexList",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "total": {"type": "integer"},
+            "reflexes": {
+              "type": "array",
+              "items": {"$ref": "#/components/schemas/ReflexSummary"}
+            }
+          },
+          "required": ["total", "reflexes"]
+        }
+      }
+    },
+    {
+      "name": "reflex.get",
+      "summary": "Get detailed reflex information",
+      "params": [
+        {"name": "reflex_id", "schema": {"type": "string"}, "required": true}
+      ],
+      "result": {
+        "name": "ReflexDetail",
+        "schema": {
+          "$ref": "#/components/schemas/ReflexDetail"
+        }
+      }
+    },
+    {
+      "name": "reflex.match",
+      "summary": "Match an intent against the reflex engine",
+      "params": [
+        {"name": "intent", "schema": {"type": "string"}, "required": true}
+      ],
+      "result": {
+        "name": "ReflexMatchResult",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "match_type": {"type": "string", "enum": ["exact", "similar", "novel", "error"]},
+            "similarity": {"type": "number"},
+            "reflex": {"$ref": "#/components/schemas/ReflexSummary"}
+          },
+          "required": ["match_type", "similarity"]
+        }
+      }
+    },
+    {
+      "name": "reflex.execute",
+      "summary": "Execute a reflex by ID, going through veto engine",
+      "params": [
+        {"name": "reflex_id", "schema": {"type": "string"}, "required": true},
+        {"name": "input", "schema": {"type": "string", "default": ""}}
+      ],
+      "result": {
+        "name": "ReflexExecution",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "execution_id": {"type": "string"},
+            "output": {"type": "string"},
+            "latency_ms": {"type": "integer"},
+            "confidence": {"type": "number"},
+            "match_type": {"type": "string"},
+            "reflex_id": {"type": "string"}
+          },
+          "required": ["execution_id", "output", "latency_ms", "reflex_id"]
+        }
+      }
+    },
+    {
+      "name": "reflex.teach",
+      "summary": "Teach the engine a new reflex",
+      "params": [
+        {"name": "intent", "schema": {"type": "string"}, "required": true},
+        {"name": "action", "schema": {"type": "string"}, "required": true}
+      ],
+      "result": {
+        "name": "TeachResult",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "reflex_id": {"type": "string"},
+            "intent": {"type": "string"},
+            "confidence": {"type": "number"}
+          },
+          "required": ["reflex_id", "intent", "confidence"]
+        }
+      }
+    },
+    {
+      "name": "reflex.log",
+      "summary": "Get execution log for a reflex",
+      "params": [
+        {"name": "reflex_id", "schema": {"type": "string"}, "required": true},
+        {"name": "limit", "schema": {"type": "integer", "default": 10}}
+      ],
+      "result": {
+        "name": "ActionLog",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {"$ref": "#/components/schemas/ActionLogEntry"}
+            }
+          },
+          "required": ["entries"]
+        }
+      }
+    },
+    {
+      "name": "voxel.world_status",
+      "summary": "Get temporal world state",
+      "params": [],
+      "result": {
+        "name": "WorldStatus",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "tick": {"type": "integer"},
+            "tick_rate": {"type": "number"},
+            "elapsed_seconds": {"type": "number"},
+            "semantics": {"type": "string", "enum": ["spatial", "temporal"]},
+            "event_voxel_count": {"type": "integer"},
+            "is_temporal": {"type": "boolean"}
+          },
+          "required": ["tick", "tick_rate", "elapsed_seconds", "semantics", "is_temporal"]
+        }
+      }
+    },
+    {
+      "name": "voxel.get_region",
+      "summary": "Get voxel data for a spatial region",
+      "params": [
+        {"name": "x", "schema": {"type": "integer"}, "required": true},
+        {"name": "y", "schema": {"type": "integer"}, "required": true},
+        {"name": "z", "schema": {"type": "integer"}, "required": true},
+        {"name": "w", "schema": {"type": "integer", "default": 0}},
+        {"name": "radius", "schema": {"type": "integer", "default": 16}}
+      ],
+      "result": {
+        "name": "VoxelRegion",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "region": {"type": "object"},
+            "event_voxels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "x": {"type": "integer"},
+                  "y": {"type": "integer"},
+                  "z": {"type": "integer"},
+                  "w": {"type": "integer"},
+                  "block_type": {"type": "string"}
+                }
+              }
+            }
+          },
+          "required": ["region"]
+        }
+      }
+    },
+    {
+      "name": "room.list",
+      "summary": "List all active rooms",
+      "params": [],
+      "result": {
+        "name": "RoomList",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "rooms": {
+              "type": "array",
+              "items": {"$ref": "#/components/schemas/RoomSummary"}
+            }
+          },
+          "required": ["rooms"]
+        }
+      }
+    },
+    {
+      "name": "room.get",
+      "summary": "Get detailed room state",
+      "params": [
+        {"name": "scope", "schema": {"type": "string"}, "required": true}
+      ],
+      "result": {
+        "name": "RoomDetail",
+        "schema": {
+          "$ref": "#/components/schemas/RoomDetail"
+        }
+      }
+    },
+    {
+      "name": "room.create",
+      "summary": "Create a new room",
+      "params": [
+        {"name": "scope", "schema": {"type": "string"}, "required": true},
+        {"name": "metadata", "schema": {"type": "object"}}
+      ],
+      "result": {
+        "name": "RoomCreateResult",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "scope": {"type": "string"},
+            "created": {"type": "boolean"}
+          },
+          "required": ["scope", "created"]
+        }
+      }
+    },
+    {
+      "name": "tile.add",
+      "summary": "Add a tile to a room",
+      "params": [
+        {"name": "scope", "schema": {"type": "string"}, "required": true},
+        {"name": "presets", "schema": {"type": "array", "items": {"type": "string"}}},
+        {"name": "capabilities", "schema": {"$ref": "#/components/schemas/TileCapabilities"}}
+      ],
+      "result": {
+        "name": "TileAddResult",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "tile_id": {"type": "string"},
+            "scope": {"type": "string"},
+            "added": {"type": "boolean"}
+          },
+          "required": ["tile_id", "scope", "added"]
+        }
+      }
+    },
+    {
+      "name": "tile.remove",
+      "summary": "Remove a tile from a room",
+      "params": [
+        {"name": "scope", "schema": {"type": "string"}, "required": true},
+        {"name": "tile_id", "schema": {"type": "string"}, "required": true}
+      ],
+      "result": {
+        "name": "TileRemoveResult",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "scope": {"type": "string"},
+            "removed": {"type": "boolean"}
+          },
+          "required": ["scope", "removed"]
+        }
+      }
+    }
+  ],
+  "components": {
+    "schemas": {
+      "BackendHealth": {
+        "type": "object",
+        "properties": {
+          "status": {"type": "string", "enum": ["ok", "error", "unavailable"]},
+          "reflex_count": {"type": "integer"},
+          "action_log_count": {"type": "integer"}
+        }
+      },
+      "ReflexSummary": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "intent": {"type": "string"},
+          "action": {"type": "string"},
+          "confidence": {"type": "number"},
+          "invoke_count": {"type": "integer"},
+          "match_type": {"type": "string"},
+          "last_invoked": {"type": "string", "format": "date-time"}
+        },
+        "required": ["id", "intent", "confidence"]
+      },
+      "ReflexDetail": {
+        "allOf": [
+          {"$ref": "#/components/schemas/ReflexSummary"},
+          {
+            "type": "object",
+            "properties": {
+              "created_at": {"type": "string", "format": "date-time"},
+              "embedding_sample": {
+                "type": "array",
+                "items": {"type": "number"}
+              }
+            }
+          }
+        ]
+      },
+      "ActionLogEntry": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "input": {"type": "string"},
+          "output": {"type": "string"},
+          "latency_ms": {"type": "integer"},
+          "confidence": {"type": "number"},
+          "timestamp": {"type": "string", "format": "date-time"}
+        },
+        "required": ["id", "input", "output", "latency_ms", "timestamp"]
+      },
+      "RoomSummary": {
+        "type": "object",
+        "properties": {
+          "scope": {"type": "string"},
+          "tile_count": {"type": "integer"},
+          "agent_count": {"type": "integer"},
+          "is_frozen": {"type": "boolean"},
+          "created_at": {"type": "string", "format": "date-time"}
+        },
+        "required": ["scope", "tile_count", "agent_count"]
+      },
+      "RoomDetail": {
+        "allOf": [
+          {"$ref": "#/components/schemas/RoomSummary"},
+          {
+            "type": "object",
+            "properties": {
+              "tiles": {
+                "type": "array",
+                "items": {"$ref": "#/components/schemas/TileDetail"}
+              },
+              "agents": {"type": "array", "items": {"type": "string"}},
+              "metadata": {"type": "object"}
+            }
+          }
+        ]
+      },
+      "TileDetail": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "presets": {"type": "array", "items": {"type": "string"}},
+          "required_agents": {"type": "array", "items": {"type": "string"}},
+          "capabilities": {"$ref": "#/components/schemas/TileCapabilities"},
+          "active_agents": {"type": "array", "items": {"type": "string"}}
+        }
+      },
+      "TileCapabilities": {
+        "type": "object",
+        "properties": {
+          "host_agents": {"type": "boolean"},
+          "temporal": {"type": "boolean"},
+          "persistent": {"type": "boolean"},
+          "emit_events": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}

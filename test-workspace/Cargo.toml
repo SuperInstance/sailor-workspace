@@ -1,0 +1,25 @@
+[workspace]
+members = [
+    "../ternary-types",
+    "../ternary-fleet/ternary-activation",
+    "../ternary-fleet/ternary-bite",
+    "../ternary-fleet/ternary-checkpoint",
+    "../ternary-fleet/ternary-conv",
+    "../ternary-fleet/ternary-distill",
+    "../ternary-fleet/ternary-em",
+    "../ternary-fleet/ternary-fuse",
+    "../ternary-fleet/ternary-hmm",
+    "../ternary-fleet/ternary-knn",
+    "../ternary-fleet/ternary-logistic",
+    "../ternary-fleet/ternary-loss",
+    "../ternary-fleet/ternary-matmul",
+    "../ternary-fleet/ternary-norm",
+    "../ternary-fleet/ternary-optimizer",
+    "../ternary-fleet/ternary-pool",
+    "../ternary-fleet/ternary-prune",
+    "../ternary-fleet/ternary-quantize",
+    "../ternary-fleet/ternary-regression",
+    "../ternary-fleet/ternary-svm",
+    "../ternary-fleet/ternary-warp",
+]
+resolver = "2"

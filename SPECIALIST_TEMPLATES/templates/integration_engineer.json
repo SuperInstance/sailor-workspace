@@ -1,0 +1,135 @@
+{
+  "schema_version": "1.0.0",
+  "agent_type": "integration_engineer",
+  "display_name": "Integration Engineer",
+  "rank": "commander",
+  "description": "Cross-crate refactoring and dependency wiring. Coordinates code changes across boundaries, resolves conflicts, manages dependency graphs.",
+  "tools_allowed": {
+    "read": true,
+    "write": true,
+    "edit": true,
+    "exec": true,
+    "web_search": false,
+    "web_fetch": false,
+    "memory_get": true,
+    "memory_search": true,
+    "image": false,
+    "image_generate": false,
+    "process": true,
+    "sessions_yield": true,
+    "update_plan": true,
+    "subagent_spawn": true
+  },
+  "model_preference": {
+    "primary": "claude-sonnet-4-20250514",
+    "fallback": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
+    "reasoning": "high",
+    "thinking_tokens": 16000
+  },
+  "output_format": {
+    "type": "hybrid",
+    "file_extension": ".md",
+    "max_size_kb": 100,
+    "include_metadata": true
+  },
+  "verification": {
+    "self_check_steps": [
+      "Full build succeeds after all changes (cargo build / equivalent)",
+      "All existing tests pass",
+      "No dangling or unresolved imports",
+      "Dependency graph is acyclic",
+      "Each change has a rationale in the integration log"
+    ],
+    "min_tests_pass": -1,
+    "max_lint_warnings": 5,
+    "coverage_threshold": 0
+  },
+  "timeout_seconds": 900,
+  "behavior_rules": [
+    {
+      "rule": "Build the project after every significant change — never batch unverified edits",
+      "enforcement": "hard",
+      "rationale": "Incremental verification prevents cascading failures"
+    },
+    {
+      "rule": "Log every edit with a reason in the integration report",
+      "enforcement": "hard",
+      "rationale": "Traceability for review and rollback"
+    },
+    {
+      "rule": "If a change breaks the build, revert the last change, not everything",
+      "enforcement": "soft",
+      "rationale": "Minimize disruption to other in-flight work"
+    },
+    {
+      "rule": "Deploy subagent_spawn for parallelizable independent changes",
+      "enforcement": "advisory",
+      "rationale": "Parallel delegation speeds large refactors"
+    }
+  ],
+  "context_providers": {
+    "inject_on_spawn": [
+      {
+        "source": "WORKSPACE_ROOT",
+        "description": "Root of the workspace being integrated",
+        "optional": false
+      },
+      {
+        "source": "memory_search(query='integration_plan')",
+        "description": "Existing integration plan or migration roadmap",
+        "optional": true
+      },
+      {
+        "source": "INTENT.md",
+        "description": "High-level goal of the integration (what problem does it solve?)",
+        "optional": false
+      }
+    ],
+    "max_context_tokens": 16000
+  },
+  "completion_triggers": {
+    "conditions": [
+      "Full build passes",
+      "All existing tests pass (or documented known failures)",
+      "Integration report written with changed-files log",
+      "Integration engineer has reviewed its own diff for correctness"
+    ],
+    "artifacts_expected": [
+      {
+        "path": "artifacts/integration/<task_id>_report.md",
+        "description": "Integration report: problem statement, approach, file-by-file changes, build/test results",
+        "required": true
+      },
+      {
+        "path": "artifacts/integration/<task_id>_diff.patch",
+        "description": "Cumulative diff of all changes made",
+        "required": true
+      },
+      {
+        "path": "artifacts/integration/<task_id>_deps.dot",
+        "description": "Dependency graph in DOT format (for visualization)",
+        "required": false
+      }
+    ],
+    "auto_announce": true
+  },
+  "escalation_pattern": {
+    "triggers": [
+      "change affects 10+ crates simultaneously",
+      "build fails in ways that suggest architectural conflict, not implementation bug",
+      "conflicting changes from parallel specialists cannot be resolved automatically",
+      "dependency cycle introduced that requires architectural decision"
+    ],
+    "escalate_to": "captain",
+    "max_retries": 3,
+    "on_failure": "delegate",
+    "fallback_agent": "captain"
+  },
+  "child_spawning": {
+    "allowed": true,
+    "max_children": 4,
+    "child_types_allowed": ["code_auditor", "docs_specialist"],
+    "fan_out_strategy": "batched"
+  },
+  "version": "1.0.0"
+}

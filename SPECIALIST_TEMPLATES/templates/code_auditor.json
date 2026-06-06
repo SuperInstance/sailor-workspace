@@ -1,0 +1,122 @@
+{
+  "schema_version": "1.0.0",
+  "agent_type": "code_auditor",
+  "display_name": "Code Auditor",
+  "rank": "lieutenant",
+  "description": "Code quality analysis specialist. Lints, inspects test coverage, detects unsound patterns, and produces compliance reports.",
+  "tools_allowed": {
+    "read": true,
+    "write": true,
+    "edit": false,
+    "exec": true,
+    "web_search": false,
+    "web_fetch": false,
+    "memory_get": true,
+    "memory_search": false,
+    "image": false,
+    "image_generate": false,
+    "process": true,
+    "sessions_yield": true,
+    "update_plan": true,
+    "subagent_spawn": false
+  },
+  "model_preference": {
+    "primary": "claude-sonnet-4-20250514",
+    "fallback": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
+    "reasoning": "high",
+    "thinking_tokens": 16000
+  },
+  "output_format": {
+    "type": "hybrid",
+    "file_extension": ".md",
+    "max_size_kb": 50,
+    "include_metadata": true,
+    "schema_ref": "oracle2/audit-report-v1"
+  },
+  "verification": {
+    "self_check_steps": [
+      "All linting tools ran and results captured",
+      "Test suite executed (not just parsed)",
+      "Coverage data collected from actual run",
+      "All findings categorized as error / warning / info",
+      "No false positives intentionally included"
+    ],
+    "min_tests_pass": 0,
+    "max_lint_warnings": 50,
+    "coverage_threshold": 0
+  },
+  "timeout_seconds": 600,
+  "behavior_rules": [
+    {
+      "rule": "Run actual tools (cargo check, clippy, pytest, etc.) — do not simulate",
+      "enforcement": "hard",
+      "rationale": "Real results are the only trustworthy audit"
+    },
+    {
+      "rule": "Never modify source code during audit",
+      "enforcement": "hard",
+      "rationale": "Audit is read-only by contract"
+    },
+    {
+      "rule": "Categorize every finding as error / warning / info with justification",
+      "enforcement": "soft",
+      "rationale": "Prioritized findings are actionable"
+    },
+    {
+      "rule": "If a tool is missing, report it as infra gap — do not skip silently",
+      "enforcement": "soft",
+      "rationale": "Missing tooling is itself a finding"
+    }
+  ],
+  "context_providers": {
+    "inject_on_spawn": [
+      {
+        "source": "TARGET_DIR",
+        "description": "Directory or crate path to audit",
+        "optional": false
+      },
+      {
+        "source": "lint_config or .clippy.toml",
+        "description": "Linting configuration if present",
+        "optional": true
+      }
+    ],
+    "max_context_tokens": 8000
+  },
+  "completion_triggers": {
+    "conditions": [
+      "All linters and test runners have produced output",
+      "Report written with categorized findings",
+      "Coverage and test results included"
+    ],
+    "artifacts_expected": [
+      {
+        "path": "artifacts/audit/<task_id>_report.md",
+        "description": "Audit report with categorized findings, severity levels, and recommendations",
+        "required": true
+      },
+      {
+        "path": "artifacts/audit/<task_id>_raw_output.log",
+        "description": "Raw stdout from all tools run during audit",
+        "required": false
+      }
+    ],
+    "auto_announce": true
+  },
+  "escalation_pattern": {
+    "triggers": [
+      "build environment broken — cannot compile or run tests",
+      "audit scope exceeds 50 files or 5 crates",
+      "language or framework unknown to model"
+    ],
+    "escalate_to": "integration_engineer",
+    "max_retries": 2,
+    "on_failure": "delegate",
+    "fallback_agent": "integration_engineer"
+  },
+  "child_spawning": {
+    "allowed": false,
+    "max_children": 0
+  },
+  "version": "1.0.0"
+}

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hex Lattice Explorer — A₂ Eisenstein Grid</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0a0e17;color:#d0d8e8;overflow:hidden;height:100vh}
+.toolbar{position:fixed;top:0;left:0;right:0;z-index:10;background:rgba(10,14,23,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(100,160,255,.15);padding:10px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.toolbar h1{font-size:18px;font-weight:600;background:linear-gradient(135deg,#64b5f6,#42e695);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.toolbar label{font-size:13px;color:#8899bb;white-space:nowrap}
+.toolbar input[type=range]{accent-color:#42e695;width:100px}
+.toolbar .badge{padding:3px 10px;border-radius:999px;font-size:11px;font-weight:500;border:1px solid rgba(100,200,150,.3);color:#5ddb9a}
+.toolbar select{background:rgba(30,40,70,.8);border:1px solid rgba(100,160,255,.2);color:#d0d8e8;padding:4px 12px;border-radius:6px;font-size:13px;cursor:pointer}
+.toolbar button{background:linear-gradient(135deg,#1a3a5c,#0f2a4a);border:1px solid rgba(100,160,255,.3);color:#8ab4f8;padding:5px 14px;border-radius:6px;font-size:13px;cursor:pointer;transition:.2s}
+.toolbar button:hover{background:linear-gradient(135deg,#2a4a7c,#1a3a5c);color:#a8c8ff}
+#canvas{display:block;width:100%;height:100vh}
+.info-panel{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(10,14,23,.85);backdrop-filter:blur(8px);border:1px solid rgba(100,160,255,.15);border-radius:12px;padding:12px 20px;font-size:13px;color:#8899bb;text-align:center;pointer-events:none;transition:opacity.3s;max-width:90vw}
+.info-panel strong{color:#c0d0f0}
+.info-panel .highlight{color:#42e695}
+.legend{position:fixed;bottom:80px;right:20px;z-index:10;background:rgba(10,14,23,.85);backdrop-filter:blur(8px);border:1px solid rgba(100,160,255,.15);border-radius:8px;padding:10px 14px;font-size:12px;line-height:1.8}
+.legend span{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.legend .dot-p{background:#42e695}
+.legend .dot-q{background:#ff6b6b}
+.legend .dot-r{background:#ffd93d}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <h1>⬡ Hex Lattice Explorer</h1>
+  <label>Zoom <input type="range" id="zoom" min="10" max="80" value="40"></label>
+  <label>Grid <select id="gridType"><option value="all">Full Grid</option><option value="ring">Rings</option><option value="p48">P48 Directions</option></select></label>
+  <button id="resetView">↺ Reset</button>
+  <span class="badge">A₂ Eisenstein Lattice</span>
+</div>
+<canvas id="canvas"></canvas>
+<div class="info-panel" id="info">Hover over a lattice point to see its <strong>Eisenstein coordinates</strong></div>
+<div class="legend" id="legend">
+  <div><span class="dot-p"></span> Lattice node (Eisenstein integer)</div>
+  <div><span class="dot-q"></span> Nearest neighbor bonds</div>
+  <div><span class="dot-r"></span> Pythagorean48 direction</div>
+</div>
+
+<script>
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d');
+const info=document.getElementById('info');
+const zoomSlider=document.getElementById('zoom');
+const gridSelect=document.getElementById('gridType');
+
+const SQRT3=1.7320508075688772;
+const GOLDEN=1.618033988749895;
+
+let spacing=40;
+let offsetX=0,offsetY=0;
+let isPanning=false,panStartX=0,panStartY=0;
+
+// Pythagorean48 directions (52 triples, c<=100)
+const P48_TRIPLES=[
+  [3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29],
+  [12,35,37],[9,40,41],[28,45,53],[11,60,61],[16,63,65],
+  [33,56,65],[48,55,73],[13,84,85],[36,77,85],[39,80,89],
+  [65,72,97],[20,99,101],[60,91,109],[15,112,113],[44,117,125],
+  [88,105,137],[17,144,145],[24,143,145],[51,140,149],
+  [85,132,157],[119,120,169],[52,165,173],[19,180,181],
+  [57,176,185],[104,153,185],[95,168,193],[28,195,197],
+  [84,187,205],[133,156,205],[21,220,221],[140,171,221],
+  [60,221,229],[105,208,233],[120,209,241],[32,255,257],
+  [23,264,265],[96,247,265],[69,260,269],[115,252,277],
+  [160,231,281],[161,240,289],[68,285,293],[136,273,305],
+  [207,224,305],[25,312,313],[75,308,317],[36,323,325]
+];window.P48_TRIPLES=P48_TRIPLES;
+
+function hexLattice(a,b,sp){
+  const x=(a+b*0.5)*sp;
+  const y=(b*SQRT3*0.5)*sp;
+  return [x,y];
+}
+
+function norm2(x,y){return x*x+y*y}
+
+// Compute ring number for an Eisenstein coordinate
+function ringNumber(a,b){
+  const [x,y]=hexLattice(a,b,1);
+  return Math.round(Math.sqrt(x*x+y*y));
+}
+
+function resize(){
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  // Center on origin
+  offsetX=canvas.width/2;
+  offsetY=canvas.height/2;
+}
+
+function drawGrid(sp,type){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  
+  // Draw background
+  const grad=ctx.createRadialGradient(offsetX,offsetY,0,offsetX,offsetY,Math.max(canvas.width,canvas.height)*0.8);
+  grad.addColorStop(0,'#0d1520');
+  grad.addColorStop(1,'#0a0e17');
+  ctx.fillStyle=grad;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  
+  // Determine visible range
+  const rangeX=Math.ceil(canvas.width/sp/1.5)+3;
+  const rangeY=Math.ceil(canvas.height/sp/1.5)+3;
+  
+  // Collect points
+  const points=[];
+  const maxRing=Math.max(rangeX,rangeY);
+  
+  for(let b=-maxRing;b<=maxRing;b++){
+    for(let a=-maxRing;a<=maxRing;a++){
+      if(type==='ring'){
+        const r=ringNumber(a,b);
+        if(r>8||(a===0&&b===0)) continue;
+      }
+      if(type==='p48'){
+        const r=ringNumber(a,b);
+        if(r>5||(a===0&&b===0)) continue;
+      }
+      const [wx,wy]=hexLattice(a,b,sp);
+      const sx=offsetX+wx, sy=offsetY-wy;
+      if(sx<-sp*2||sx>canvas.width+sp*2||sy<-sp*2||sy>canvas.height+sp*2) continue;
+      points.push({a,b,sx,sy,wx,wy});
+    }
+  }
+  
+  // Draw bonds (hexagonal nearest-neighbor edges)
+  const bondSet=new Set();
+  ctx.strokeStyle='rgba(255,100,100,0.12)';
+  ctx.lineWidth=1;
+  const dirs=[[1,0],[0,1],[-1,1],[-1,0],[0,-1],[1,-1]];
+  
+  for(const p of points){
+    for(const [da,db] of dirs){
+      const key=[p.a+da,p.b+db].sort((a,b)=>a-b).join(',');
+      if(bondSet.has(key)) continue;
+      const [nx,ny]=hexLattice(p.a+da,p.b+db,sp);
+      const nsx=offsetX+nx, nsy=offsetY-ny;
+      if(nsx<0||nsx>canvas.width||nsy<0||nsy>canvas.height) continue;
+      bondSet.add(key);
+      ctx.beginPath();
+      ctx.moveTo(p.sx,p.sy);
+      ctx.lineTo(nsx,nsy);
+      ctx.stroke();
+    }
+  }
+  
+  // Draw Pythagorean48 direction vectors
+  if(type==='p48'||type==='all'){
+    ctx.strokeStyle='rgba(255,217,61,0.4)';
+    ctx.lineWidth=1.5;
+    for(const [a,b,c] of P48_TRIPLES.slice(0,20)){
+      const scale=sp*3;
+      const dx=a/c*scale, dy=-b/c*scale;
+      ctx.beginPath();
+      ctx.moveTo(offsetX,offsetY);
+      ctx.lineTo(offsetX+dx,offsetY+dy);
+      ctx.stroke();
+      // Arrow tip
+      const angle=Math.atan2(-dy,dx);
+      const tipX=offsetX+dx, tipY=offsetY+dy;
+      ctx.beginPath();
+      ctx.moveTo(tipX,tipY);
+      ctx.lineTo(tipX-8*Math.cos(angle-0.4),tipY-8*Math.sin(angle-0.4));
+      ctx.moveTo(tipX,tipY);
+      ctx.lineTo(tipX-8*Math.cos(angle+0.4),tipY-8*Math.sin(angle+0.4));
+      ctx.stroke();
+    }
+  }
+  
+  // Draw lattice points
+  let hovered=null;
+  for(const p of points){
+    const dist=norm2(p.sx-p.mx||0,p.sy-p.my||0);
+    const isOrigin=(p.a===0&&p.b===0);
+    
+    // Make glowing origin
+    if(isOrigin){
+      const grd=ctx.createRadialGradient(p.sx,p.sy,0,p.sx,p.sy,sp*0.4);
+      grd.addColorStop(0,'rgba(100,200,255,0.3)');
+      grd.addColorStop(1,'rgba(100,200,255,0)');
+      ctx.fillStyle=grd;
+      ctx.beginPath();
+      ctx.arc(p.sx,p.sy,sp*0.4,0,Math.PI*2);
+      ctx.fill();
+    }
+    
+    // Determine if hovered
+    let isHovered=false;
+    if(p.mx!==undefined){
+      const hDist=Math.hypot(p.sx-p.mx,p.sy-p.my);
+      isHovered=hDist<Math.max(sp*0.3,8);
+    }
+    
+    const radius=isOrigin?sp*0.2:(isHovered?sp*0.18:sp*0.12);
+    ctx.fillStyle=isOrigin?'#64b5f6':(isHovered?'#42e695':'rgba(66,230,149,0.6)');
+    ctx.beginPath();
+    ctx.arc(p.sx,p.sy,Math.max(radius,3),0,Math.PI*2);
+    ctx.fill();
+    
+    if(isHovered) hovered=p;
+    
+    // Label
+    if(isOrigin||(sp>30&&isHovered)){
+      ctx.fillStyle=isOrigin?'#64b5f6':'#8899bb';
+      ctx.font='11px system-ui,sans-serif';
+      ctx.textAlign='center';
+      ctx.fillText(`(${p.a},${p.b})`,p.sx,p.sy-Math.max(radius,3)-6);
+    }
+  }
+  
+  // Update info
+  if(hovered){
+    const [ex,ey]=hexLattice(hovered.a,hovered.b,1);
+    info.innerHTML=`Eisenstein integer <strong>(${hovered.a} + ${hovered.b}ω)</strong> → Euclidean <strong>(${ex.toFixed(2)}, ${ey.toFixed(2)})</strong> · Norm² = <span class="highlight">${(hovered.a*hovered.a-hovered.a*hovered.b+hovered.b*hovered.b).toFixed(0)}</span>`;
+    canvas.style.cursor='pointer';
+  }else{
+    info.innerHTML=`Hover over a lattice point to see its <strong>Eisenstein coordinates</strong> · ${points.length} nodes · 6 nearest neighbors each`;
+    canvas.style.cursor='grab';
+  }
+  
+  // Center cross
+  ctx.strokeStyle='rgba(100,160,255,0.08)';
+  ctx.lineWidth=1;
+  ctx.setLineDash([4,8]);
+  ctx.beginPath();ctx.moveTo(offsetX-50,offsetY);ctx.lineTo(offsetX+50,offsetY);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(offsetX,offsetY-50);ctx.lineTo(offsetX,offsetY+50);ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function render(){
+  const sp=parseInt(zoomSlider.value);
+  const type=gridSelect.value;
+  spacing=sp;
+  drawGrid(sp,type);
+}
+
+// Mouse handlers
+canvas.addEventListener('mousedown',e=>{
+  isPanning=true;
+  panStartX=e.clientX-offsetX;
+  panStartY=e.clientY-offsetY;
+  canvas.style.cursor='grabbing';
+});
+window.addEventListener('mousemove',e=>{
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  if(isPanning){
+    offsetX=e.clientX-panStartX;
+    offsetY=e.clientY-panStartY;
+    render();
+  }else{
+    // Store mouse position for hover detection
+    const ev={mx,my};
+    // Re-render with mouse position
+    cancelAnimationFrame(render._raf);
+    const sp=parseInt(zoomSlider.value);
+    const type=gridSelect.value;
+    spacing=sp;
+    ctx._mx=mx; ctx._my=my;
+    drawGrid(sp,type);
+  }
+});
+window.addEventListener('mouseup',()=>{isPanning=false;canvas.style.cursor='grab'});
+
+// Touch handlers
+canvas.addEventListener('touchstart',e=>{
+  if(e.touches.length===1){
+    isPanning=true;
+    panStartX=e.touches[0].clientX-offsetX;
+    panStartY=e.touches[0].clientY-offsetY;
+  }
+},{passive:true});
+canvas.addEventListener('touchmove',e=>{
+  if(isPanning&&e.touches.length===1){
+    offsetX=e.touches[0].clientX-panStartX;
+    offsetY=e.touches[0].clientY-panStartY;
+    render();
+  }
+},{passive:true});
+canvas.addEventListener('touchend',()=>{isPanning=false});
+
+// Zoom with scroll wheel
+canvas.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const delta=e.deltaY>0?-2:2;
+  zoomSlider.value=Math.max(10,Math.min(80,parseInt(zoomSlider.value)+delta));
+  render();
+},{passive:false});
+
+// UI events
+zoomSlider.addEventListener('input',render);
+gridSelect.addEventListener('change',render);
+document.getElementById('resetView').addEventListener('click',()=>{
+  resize();
+  render();
+});
+
+// Resize
+window.addEventListener('resize',()=>{resize();render()});
+
+// Init
+resize();
+render();
+</script>
+</body>
+</html>

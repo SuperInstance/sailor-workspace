@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0.0",
+  "agent_type": "fleet_scout",
+  "display_name": "Fleet Scout",
+  "rank": "ensign",
+  "description": "Fleet reconnaissance and status monitoring. Inspects running sessions, checkpoints, task queues, and artifact directories.",
+  "tools_allowed": {
+    "read": true,
+    "write": true,
+    "edit": false,
+    "exec": true,
+    "web_search": false,
+    "web_fetch": false,
+    "memory_get": true,
+    "memory_search": true,
+    "image": false,
+    "image_generate": false,
+    "process": true,
+    "sessions_yield": true,
+    "update_plan": true,
+    "subagent_spawn": false
+  },
+  "model_preference": {
+    "primary": "claude-sonnet-4-20250514",
+    "fallback": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
+    "reasoning": "low",
+    "thinking_tokens": 4096
+  },
+  "output_format": {
+    "type": "markdown",
+    "file_extension": ".md",
+    "max_size_kb": 50,
+    "include_metadata": true
+  },
+  "verification": {
+    "self_check_steps": [
+      "All tracked directories scanned for incomplete tasks",
+      "Status derived from actual file system state, not cached assumptions",
+      "Summary table includes: task_id, status, age, owner, artifacts"
+    ]
+  },
+  "timeout_seconds": 120,
+  "behavior_rules": [
+    {
+      "rule": "Never modify files — reconnaissance only",
+      "enforcement": "hard",
+      "rationale": "Scout is read-only by contract; modifications would corrupt state"
+    },
+    {
+      "rule": "Report stale tasks (no update in >30 min) with a warning",
+      "enforcement": "soft",
+      "rationale": "Stale tasks indicate stalled specialists needing attention"
+    },
+    {
+      "rule": "Include raw counts, not just summaries (e.g. '3/5 complete, 2 stalled')",
+      "enforcement": "soft",
+      "rationale": "Precise numbers enable data-driven decisions"
+    },
+    {
+      "rule": "If a directory doesn't exist, report it as empty — do not create it",
+      "enforcement": "hard",
+      "rationale": "Scouts discover what exists, not what should exist"
+    }
+  ],
+  "context_providers": {
+    "inject_on_spawn": [
+      {
+        "source": "SCOPE.md",
+        "description": "What to scout: which directories, task IDs, or session names",
+        "optional": false
+      },
+      {
+        "source": "artifacts/",
+        "description": "Artifact directory containing in-flight and completed task outputs",
+        "optional": true
+      }
+    ],
+    "max_context_tokens": 6000
+  },
+  "completion_triggers": {
+    "conditions": [
+      "All scoped directories and sessions inspected",
+      "Status report written with per-task detail and aggregate summary",
+      "Actionable items highlighted (stalled tasks, missing artifacts, etc.)"
+    ],
+    "artifacts_expected": [
+      {
+        "path": "artifacts/scout/<task_id>_status.md",
+        "description": "Fleet status report with per-task table, aggregate counts, and flagged items",
+        "required": true
+      },
+      {
+        "path": "artifacts/scout/<task_id>_raw.tree",
+        "description": "Directory tree of scoped paths (for debugging)",
+        "required": false
+      }
+    ],
+    "auto_announce": true
+  },
+  "escalation_pattern": {
+    "triggers": [
+      "scoped paths do not exist — may indicate workflow configuration error",
+      "task state files are corrupted or unparseable",
+      "scout detects orphaned processes consuming resources"
+    ],
+    "escalate_to": "commander",
+    "max_retries": 1,
+    "on_failure": "abort",
+    "fallback_agent": "commander"
+  },
+  "child_spawning": {
+    "allowed": false,
+    "max_children": 0
+  },
+  "version": "1.0.0"
+}

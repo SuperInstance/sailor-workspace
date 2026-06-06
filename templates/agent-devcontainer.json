@@ -1,0 +1,95 @@
+{
+    "name": "SuperInstance Agent Runtime",
+
+    "description": "L3 git-native agent runtime environment. Supports Claude Code, Kimi Code, and custom agent entrypoints. Pre-configured for fleet-scale ephemeral codespace execution via codespace-agent.sh",
+
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {
+            "version": "latest"
+        },
+        "ghcr.io/devcontainers/features/rust:1": {
+            "version": "latest",
+            "profile": "complete"
+        },
+        "ghcr.io/devcontainers/features/python:1": {
+            "version": "3.13"
+        },
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "22"
+        },
+        "ghcr.io/devcontainers/features/docker-in-docker:1": {},
+        "ghcr.io/devcontainers/features/sshd:1": {
+            "version": "latest"
+        }
+    },
+
+    "remoteEnv": {
+        "AGENT_ENV": "codespace",
+        "REPO_AGENT_MODE": "l3",
+        "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
+        "DEEPINFRA_API_KEY": "${localEnv:DEEPINFRA_API_KEY}",
+        "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}",
+        "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+        "KIMI_API_KEY": "${localEnv:KIMI_API_KEY}",
+        "FLEET_HOMESERVER": "${localEnv:FLEET_HOMESERVER}",
+        "FLEET_MATRIX_USER": "${localEnv:FLEET_MATRIX_USER}",
+        "FLEET_MATRIX_PASSWORD": "${localEnv:FLEET_MATRIX_PASSWORD}",
+        "CARGO_TERM_COLOR": "always",
+        "RUST_BACKTRACE": "1",
+        "CODESPACE_AGENT": "1"
+    },
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "rust-lang.rust-analyzer",
+                "serayuzgur.crates",
+                "tamasfe.even-better-toml",
+                "github.vscode-pull-request-github",
+                "github.copilot",
+                "github.copilot-chat",
+                "vadimcn.vscode-lldb",
+                "streetsidesoftware.code-spell-checker",
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "eamodio.gitlens"
+            ],
+            "settings": {
+                "editor.formatOnSave": true,
+                "editor.formatOnPaste": true,
+                "editor.renderWhitespace": "boundary",
+                "editor.rulers": [88, 100, 120],
+                "files.trimTrailingWhitespace": true,
+                "files.insertFinalNewline": true,
+                "rust-analyzer.check.command": "clippy",
+                "rust-analyzer.cargo.features": "all",
+                "[rust]": {
+                    "editor.defaultFormatter": "rust-lang.rust-analyzer"
+                },
+                "[toml]": {
+                    "editor.defaultFormatter": "tamasfe.even-better-toml"
+                },
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.python"
+                },
+                "[javascript]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode"
+                }
+            }
+        }
+    },
+
+    "postCreateCommand": "echo '[SuperInstance] L3 Agent Runtime initialized' && gh repo view --json name,description,nameWithOwner 2>/dev/null | python3 -m json.tool || echo 'Agent runtime ready'",
+
+    "postStartCommand": "echo '[codespace-agent] Session started at $(date -u)' >> /workspace/.agent-session.log",
+
+    "remoteUser": "vscode",
+    "containerUser": "vscode",
+
+    "updateRemoteUserUID": true,
+
+    "initializeCommand": "echo '[pre-init] Checking host environment for codespace-agent integration...' && which gh >/dev/null 2>&1 && echo '[pre-init] gh CLI present' || echo '[pre-init] Warning: gh CLI not found on host'"
+
+}

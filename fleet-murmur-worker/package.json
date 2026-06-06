@@ -1,0 +1,32 @@
+{
+  "name": "fleet-murmur-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers agent runtime — L3+L4 fusion for the Ternary Fleet",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "itty-router": "^5.0.18"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240601.0",
+    "typescript": "^5.5.0",
+    "vitest": "^1.6.0",
+    "wrangler": "^3.60.0"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "fleet",
+    "agent",
+    "reflex",
+    "ai"
+  ],
+  "license": "MIT"
+}

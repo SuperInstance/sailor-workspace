@@ -1,0 +1,96 @@
+name = "fleet-murmur-worker"
+main = "src/index.ts"
+compatibility_date = "2026-06-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ── Free Tier ──────────────────────────────────────────────
+# Cloudflare Workers Free Plan:
+#   - 100,000 requests/day
+#   - 10ms CPU time per request (fast path fits easily)
+#   - 1MB script size
+#   - 1000 subrequests per request
+#   - 3 Cron Triggers
+#   - Workers KV (100k reads/day, 1k writes/day)
+#   - Durable Objects (1M requests/month, 1GB storage)
+
+workers_dev = true
+
+# ── Custom Domain ──────────────────────────────────────────
+# Uncomment and set your zone_id when deploying to a custom domain
+# routes = [
+#   { pattern = "murmur.superinstance.dev", zone_id = "your-zone-id" },
+# ]
+
+# ── Durable Objects ────────────────────────────────────────
+# AgentCoordination: Singleton DO for agent registry,
+# subscription management, and execution metrics.
+[[durable_objects.bindings]]
+name = "AGENT_COORDINATION"
+class_name = "AgentCoordination"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["AgentCoordination"]
+
+# ── KV Namespaces ──────────────────────────────────────────
+# REFLEX_STORE: Persisted reflex definitions and embeddings
+#   - Key: reflex:{id}
+#   - Value: JSON ReflexRecord
+#   - Also supports: reflex-index:{hash} for fast lookup
+[[kv_namespaces]]
+binding = "REFLEX_STORE"
+id = "9b0d667df8174cb09180fb516bf372d1"
+preview_id = ""
+
+# CACHE: Frequently accessed responses and temporary state
+#   - Key: cache:{intent-hash}
+#   - Value: JSON cached response
+#   - TTL: 300s (5 minutes)
+[[kv_namespaces]]
+binding = "CACHE"
+id = "9e8b3f687a9b4e24aaa4958278ed0333"
+preview_id = ""
+
+# ── Environment Variables ──────────────────────────────────
+# Set these via `wrangler secret put` for production
+# or via `.dev.vars` for local development
+
+# Required — GitHub token for blackboard publishing
+# GITHUB_TOKEN = ""
+
+# Agent identity
+# AGENT_NAME = "fleet-murmur-worker"
+# AGENT_ROLE = "reflex-responder"
+
+# Vector DB backend: "kv-fallback" | "external-rest"
+# VECTOR_DB_BACKEND = "kv-fallback"
+
+# LLM provider (optional — fast path only without this)
+# DEEPINFRA_API_KEY = ""
+# DEEPINFRA_API_URL = "https://api.deepinfra.com/v1"
+
+# Embedding service: "hash-fallback" | "deepinfra"
+# EMBEDDING_SERVICE = "hash-fallback"
+
+# Blackboard repo (construct-coordination)
+# BLACKBOARD_REPO = "SuperInstance/construct-coordination"
+# BLACKBOARD_BRANCH = "main"
+
+# Notion bridge (optional)
+# NOTION_TOKEN = ""
+# NOTION_DATABASE_ID = ""
+
+# External vector DB (when VECTOR_DB_BACKEND = "external-rest")
+# VECTOR_DB_API = ""
+# VECTOR_DB_KEY = ""
+
+# ── Cron Triggers ──────────────────────────────────────────
+[triggers]
+crons = [
+  # Health check: every 5 minutes
+  "*/5 * * * *",
+  # Metrics broadcast: every hour
+  "0 * * * *",
+  # Nightly GC/sync: daily at 3:00 UTC
+  "0 3 * * *",
+]

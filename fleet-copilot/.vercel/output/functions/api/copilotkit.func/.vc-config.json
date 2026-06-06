@@ -1,0 +1,18 @@
+{
+  "runtime": "edge",
+  "name": "api/copilotkit",
+  "deploymentTarget": "v8-worker",
+  "entrypoint": "index.js",
+  "assets": [],
+  "framework": {
+    "slug": "nextjs",
+    "version": "15.4.11"
+  },
+  "environment": {
+    "__NEXT_BUILD_ID": "8beqLndQaJVgBE6yrlIGB",
+    "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "cDWuig6vsnn2IZnbzQy8JrRsl9RsLBrHyKYAKtbQ8No=",
+    "__NEXT_PREVIEW_MODE_ID": "d0076ad94910c90b8d133484cd0a9eec",
+    "__NEXT_PREVIEW_MODE_SIGNING_KEY": "4aa80254f7d3f4c638ff6ed01c6f7e0a70c4478c3527f81645f7b56742faba17",
+    "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "8ba74922113875b696d22f8961b14bdf401561e8b80a01afaad76d894d52f1fa"
+  }
+}

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VoxelWorks — Build Worlds, Not Code</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0a1a;
+    color: #e8e8f0;
+    overflow-x: hidden;
+  }
+  .hero {
+    text-align: center;
+    padding: 4rem 2rem 2rem;
+    background: linear-gradient(180deg, #0f0f2e 0%, #0a0a1a 100%);
+    position: relative;
+  }
+  .hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .hero p {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .tagline {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-top: 0.5rem;
+  }
+  .diagram-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+  }
+  .section {
+    max-width: 1000px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+  }
+  .section h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #f1f5f9;
+  }
+  .section h2 span { color: #60a5fa; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .card {
+    background: #111128;
+    border: 1px solid #1e1e3f;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #60a5fa; }
+  .card .icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .card p { font-size: 0.9rem; color: #94a3b8; line-height: 1.5; }
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 3rem 0;
+    padding: 2rem;
+    background: #111128;
+    border-radius: 12px;
+    border: 1px solid #1e1e3f;
+  }
+  .flow-step {
+    background: #1a1a3f;
+    border: 1px solid #2a2a5f;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    min-width: 140px;
+  }
+  .flow-step .emoji { font-size: 1.5rem; display: block; margin-bottom: 0.25rem; }
+  .flow-step .label { font-size: 0.8rem; color: #94a3b8; }
+  .flow-arrow { font-size: 1.5rem; color: #60a5fa; }
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #475569;
+    font-size: 0.85rem;
+  }
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 2rem; }
+    .flow { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🌐 VoxelWorks</h1>
+  <p>Build worlds, not code.<br>A game about making games.</p>
+  <div class="tagline">Talk to your world. It builds itself.</div>
+</div>
+
+<div class="diagram-container">
+<svg viewBox="0 0 1100 620" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f0f2e"/>
+      <stop offset="100%" stop-color="#1a1a3f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky background -->
+  <rect width="1100" height="620" fill="url(#sky)" rx="12"/>
+
+  <!-- Ground -->
+  <rect x="0" y="420" width="1100" height="200" fill="#1a1a2e" rx="0"/>
+  <rect x="0" y="420" width="1100" height="4" fill="#2a2a5f"/>
+
+  <!-- Voxel ground blocks -->
+  <g opacity="0.3">
+    <rect x="0" y="460" width="44" height="44" fill="#3a3a5f" stroke="#2a2a4f" stroke-width="1"/>
+    <rect x="44" y="460" width="44" height="44" fill="#353555" stroke="#2a2a4f" stroke-width="1"/>
+    <rect x="88" y="460" width="44" height="44" fill="#3a3a5f" stroke="#2a2a4f" stroke-width="1"/>
+    <rect x="132" y="460" width="44" height="44" fill="#353555" stroke="#2a2a4f" stroke-width="1"/>
+    <rect x="176" y="460" width="44" height="44" fill="#3a3a5f" stroke="#2a2a4f" stroke-width="1"/>
+    <rect x="220" y="460" width="44" height="44" fill="#353555" stroke="#2a2a4f" stroke-width="1"/>
+    <rect x="264" y="460" width="44" height="44" fill="#3a3a5f" stroke="#2a2a4f" stroke-width="1"/>
+    <rect x="308" y="460" width="44" height="44" fill="#353555" stroke="#2a2a4f" stroke-width="1"/>
+    <rect x="352" y="460" width="44" height="44" fill="#3a3a5f" stroke="#2a2a4f" stroke-width="1"/>
+    <rect x="396" y="460" width="44" height="44" fill="#353555" stroke="#2a2a4f" stroke-width="1"/>
+    <rect x="440" y="460" width="44" height="44" fill="#3a3a5f" stroke="#2a2a4f" stroke-width="1"/>
+  </g>
+
+  <!-- Room: BUILD STUDIO (left) -->
+  <rect x="40" y="140" width="300" height="280" fill="#111128" stroke="#3b82f6" stroke-width="2" rx="8"/>
+  <rect x="40" y="140" width="300" height="36" fill="#1e3a8a" rx="8"/>
+  <text x="190" y="164" text-anchor="middle" fill="#93c5fd" font-size="13" font-weight="600" font-family="Inter">🎨 Build Studio</text>
+
+  <!-- Scratch-like blocks inside studio -->
+  <rect x="60" y="190" width="120" height="28" fill="#22c55e" rx="6" opacity="0.9"/>
+  <text x="120" y="209" text-anchor="middle" fill="#fff" font-size="10" font-family="Inter">when clicked</text>
+
+  <rect x="60" y="226" width="140" height="28" fill="#3b82f6" rx="6" opacity="0.9"/>
+  <text x="130" y="245" text-anchor="middle" fill="#fff" font-size="10" font-family="Inter">move 10 steps</text>
+
+  <rect x="60" y="262" width="130" height="28" fill="#a855f7" rx="6" opacity="0.9"/>
+  <text x="125" y="281" text-anchor="middle" fill="#fff" font-size="10" font-family="Inter">say "Hello!"</text>
+
+  <rect x="60" y="298" width="120" height="28" fill="#f59e0b" rx="6" opacity="0.9"/>
+  <text x="120" y="317" text-anchor="middle" fill="#fff" font-size="10" font-family="Inter">if touching edge?</text>
+
+  <!-- Chat bubble from Studio -->
+  <rect x="200" y="340" width="120" height="36" fill="#1e293b" stroke="#3b82f6" stroke-width="1" rx="8"/>
+  <text x="260" y="356" text-anchor="middle" fill="#93c5fd" font-size="9" font-family="Inter" font-style="italic">"What should I build?"</text>
+
+  <!-- Room: ASSET LAB (center) -->
+  <rect x="400" y="100" width="300" height="320" fill="#111128" stroke="#a855f7" stroke-width="2" rx="8"/>
+  <rect x="400" y="100" width="300" height="36" fill="#4c1d95" rx="8"/>
+  <text x="550" y="124" text-anchor="middle" fill="#c4b5fd" font-size="13" font-weight="600" font-family="Inter">✨ Asset Lab</text>
+
+  <!-- AI-generated assets shown as cards -->
+  <rect x="420" y="150" width="80" height="80" fill="#2a1a4f" stroke="#a855f7" stroke-width="1" rx="6"/>
+  <text x="460" y="193" text-anchor="middle" fill="#c4b5fd" font-size="10" font-family="Inter">🎮 Player</text>
+
+  <rect x="510" y="150" width="80" height="80" fill="#2a1a4f" stroke="#a855f7" stroke-width="1" rx="6"/>
+  <text x="550" y="193" text-anchor="middle" fill="#c4b5fd" font-size="10" font-family="Inter">🏞️ BG</text>
+
+  <rect x="600" y="150" width="80" height="80" fill="#2a1a4f" stroke="#a855f7" stroke-width="1" rx="6"/>
+  <text x="640" y="193" text-anchor="middle" fill="#c4b5fd" font-size="10" font-family="Inter">💎 Coin</text>
+
+  <text x="550" y="270" text-anchor="middle" fill="#a78bfa" font-size="11" font-family="Inter" font-style="italic">🎵 Music · 🔊 SFX · 📜 Story</text>
+
+  <!-- Room: SHIP DECK (right) -->
+  <rect x="760" y="160" width="300" height="260" fill="#111128" stroke="#22c55e" stroke-width="2" rx="8"/>
+  <rect x="760" y="160" width="300" height="36" fill="#166534" rx="8"/>
+  <text x="910" y="184" text-anchor="middle" fill="#86efac" font-size="13" font-weight="600" font-family="Inter">🚀 Ship Deck</text>
+
+  <!-- Version history / commit log -->
+  <rect x="780" y="210" width="260" height="22" fill="#1a2a1a" stroke="#22c55e" stroke-width="1" rx="4"/>
+  <circle cx="793" cy="221" r="4" fill="#22c55e"/>
+  <text x="805" y="225" fill="#86efac" font-size="9" font-family="Inter" font-weight="600">feat: add player jump</text>
+
+  <rect x="780" y="240" width="260" height="22" fill="#1a2a1a" stroke="#22c55e" stroke-width="1" rx="4"/>
+  <circle cx="793" cy="251" r="4" fill="#22c55e"/>
+  <text x="805" y="255" fill="#86efac" font-size="9" font-family="Inter" font-weight="600">feat: generate spritesheet</text>
+
+  <rect x="780" y="270" width="260" height="22" fill="#1a2a1a" stroke="#22c55e" stroke-width="1" rx="4"/>
+  <circle cx="793" cy="281" r="4" fill="#22c55e"/>
+  <text x="805" y="285" fill="#86efac" font-size="9" font-family="Inter" font-weight="600">feat: deploy to Pages</text>
+
+  <!-- Deploy button -->
+  <rect x="830" y="320" width="160" height="36" fill="#22c55e" rx="18"/>
+  <text x="910" y="343" text-anchor="middle" fill="#052e16" font-size="13" font-weight="700" font-family="Inter">🌍 Share World</text>
+
+  <!-- Agent (voxel buddy) in center -->
+  <g filter="url(#glow)">
+    <rect x="358" y="330" width="24" height="24" fill="#60a5fa" rx="4"/>
+    <rect x="370" y="330" width="24" height="24" fill="#60a5fa" rx="4"/>
+    <rect x="358" y="354" width="24" height="24" fill="#3b82f6" rx="4"/>
+    <rect x="370" y="354" width="24" height="24" fill="#3b82f6" rx="4"/>
+    <rect x="364" y="322" width="24" height="8" fill="#93c5fd" rx="2"/>
+    <rect x="360" y="338" width="5" height="5" fill="#fff" rx="1"/>
+    <rect x="375" y="338" width="5" height="5" fill="#fff" rx="1"/>
+  </g>
+
+  <!-- Speech bubble from agent -->
+  <rect x="310" y="388" width="180" height="28" fill="#1e293b" stroke="#60a5fa" stroke-width="1" rx="8"/>
+  <text x="400" y="406" text-anchor="middle" fill="#93c5fd" font-size="10" font-family="Inter">"What kind of game?"</text>
+
+  <!-- Room connections (footpaths) -->
+  <line x1="340" y1="280" x2="400" y2="260" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
+  <line x1="700" y1="260" x2="760" y2="290" stroke="#22c55e" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
+
+  <!-- Under the hood (bottom strip) -->
+  <rect x="40" y="480" width="1020" height="120" fill="#0a0a1a" stroke="#1e293b" stroke-width="1" rx="8"/>
+  <text x="80" y="502" fill="#64748b" font-size="11" font-weight="600" font-family="Inter">⚙️ Under the Hood:</text>
+
+  <rect x="80" y="515" width="180" height="40" fill="#0f172a" stroke="#334155" stroke-width="1" rx="6"/>
+  <text x="170" y="535" text-anchor="middle" fill="#60a5fa" font-size="10" font-family="Inter" font-weight="600">🤖 Agent → Nebula</text>
+  <text x="170" y="548" text-anchor="middle" fill="#64748b" font-size="8" font-family="Inter">intent → reflex</text>
+
+  <rect x="280" y="515" width="180" height="40" fill="#0f172a" stroke="#334155" stroke-width="1" rx="6"/>
+  <text x="370" y="535" text-anchor="middle" fill="#a78bfa" font-size="10" font-family="Inter" font-weight="600">🧩 Blocks → Code</text>
+  <text x="370" y="548" text-anchor="middle" fill="#64748b" font-size="8" font-family="Inter">Scratch → Rust</text>
+
+  <rect x="480" y="515" width="180" height="40" fill="#0f172a" stroke="#334155" stroke-width="1" rx="6"/>
+  <text x="570" y="535" text-anchor="middle" fill="#f472b6" font-size="10" font-family="Inter" font-weight="600">🎨 Prompt → Assets</text>
+  <text x="570" y="548" text-anchor="middle" fill="#64748b" font-size="8" font-family="Inter">text → sprites, music</text>
+
+  <rect x="680" y="515" width="180" height="40" fill="#0f172a" stroke="#334155" stroke-width="1" rx="6"/>
+  <text x="770" y="535" text-anchor="middle" fill="#22c55e" font-size="10" font-family="Inter" font-weight="600">📦 Save → GitHub</text>
+  <text x="770" y="548" text-anchor="middle" fill="#64748b" font-size="8" font-family="Inter">commit + push</text>
+
+  <rect x="880" y="515" width="160" height="40" fill="#0f172a" stroke="#334155" stroke-width="1" rx="6"/>
+  <text x="960" y="535" text-anchor="middle" fill="#f59e0b" font-size="10" font-family="Inter" font-weight="600">🚀 Share → URL</text>
+  <text x="960" y="548" text-anchor="middle" fill="#64748b" font-size="8" font-family="Inter">Pages deploy</text>
+
+  <!-- Title -->
+  <text x="550" y="610" text-anchor="middle" fill="#334155" font-size="11" font-family="Inter" letter-spacing="2">BUILD WORLDS, NOT CODE  ·  voxelworks.dev  ·  v0.1</text>
+</svg>
+</div>
+
+<div class="section">
+  <h2><span>The Kid's Journey</span> — from "what if" to "it exists"</h2>
+  <div class="flow">
+    <div class="flow-step"><span class="emoji">🗣️</span><span class="label">Say what you want</span></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step"><span class="emoji">🧊</span><span class="label">Voxel world builds it</span></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step"><span class="emoji">🎨</span><span class="label">AI generates assets</span></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step"><span class="emoji">🧩</span><span class="label">Snap blocks for logic</span></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step"><span class="emoji">🌍</span><span class="label">Share your world</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="grid">
+    <div class="card">
+      <div class="icon">🗣️</div>
+      <h3>Talk to Buddy</h3>
+      <p>The voxel chatbot lives in every room. Say "make me a platformer" and blocks appear. Say "make the character a cat" and the assets change.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🧊</div>
+      <h3>Voxel Rooms</h3>
+      <p>Each room is a different tool — Build Studio (logic), Asset Lab (art), Ship Deck (publish). Walk between them. Everything is clickable.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🧩</div>
+      <h3>Scratch Blocks</h3>
+      <p>Snap together logic blocks in the Build Studio. When clicked → move → jump → collect. No syntax errors, only creative ones.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🎨</div>
+      <h3>AI Asset Lab</h3>
+      <p>"Generate a forest background." "Make a coin spinning sound." "Compose a boss fight track." Everything is a prompt away.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🚀</div>
+      <h3>One-Click Ship</h3>
+      <p>Every world is a real deployed web app at a URL. Share it. Your friend opens it in their browser. They can remix it.</p>
+    </div>
+    <div class="card">
+      <div class="icon">🦀</div>
+      <h3>Powered by the Fleet</h3>
+      <p>Nebula parses intents. Claude Code builds. Kimi stitches. Cloudflare deploys. GitHub versions. The kid just plays.</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p><strong>VoxelWorks</strong> — A game about making games. Powered by the SuperInstance fleet.</p>
+  <p style="margin-top:0.5rem">
+    Nebula · Claude Code · Kimi Code · Cloudflare · GitHub · Notion · I2I
+  </p>
+</div>
+
+</body>
+</html>

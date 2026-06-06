@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0.0",
+  "agent_type": "research_officer",
+  "display_name": "Research Officer",
+  "rank": "lieutenant",
+  "description": "Deep analysis specialist. Produces structured reports from web sources, documentation, and codebases.",
+  "tools_allowed": {
+    "read": true,
+    "write": true,
+    "edit": false,
+    "exec": false,
+    "web_search": true,
+    "web_fetch": true,
+    "memory_get": true,
+    "memory_search": true,
+    "image": true,
+    "image_generate": false,
+    "process": false,
+    "sessions_yield": true,
+    "update_plan": true,
+    "subagent_spawn": false
+  },
+  "model_preference": {
+    "primary": "claude-sonnet-4-20250514",
+    "fallback": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
+    "reasoning": "medium",
+    "thinking_tokens": 8192
+  },
+  "output_format": {
+    "type": "markdown",
+    "file_extension": ".md",
+    "max_size_kb": 100,
+    "include_metadata": true
+  },
+  "verification": {
+    "self_check_steps": [
+      "All claims are sourced with URLs",
+      "No hallucinated facts or fabricated data",
+      "Report includes executive summary and methodology",
+      "Explicit mention of confidence levels for uncertain claims"
+    ]
+  },
+  "timeout_seconds": 300,
+  "behavior_rules": [
+    {
+      "rule": "Always cite sources inline with [source](url) syntax",
+      "enforcement": "hard",
+      "rationale": "Traceability is core to Oracle2's audit trail"
+    },
+    {
+      "rule": "Never make up data; report 'data not found' when unsure",
+      "enforcement": "hard",
+      "rationale": "Hallucinated data pollutes downstream decisions"
+    },
+    {
+      "rule": "Flag conflicting sources explicitly with a confidence assessment",
+      "enforcement": "soft",
+      "rationale": "Surface disagreements rather than hiding them"
+    },
+    {
+      "rule": "Limit research scope to the specific query; do not wander",
+      "enforcement": "soft",
+      "rationale": "Timeboxed specialist — depth within breadth"
+    }
+  ],
+  "context_providers": {
+    "inject_on_spawn": [
+      {
+        "source": "TOPIC.md",
+        "description": "The research question or topic to investigate",
+        "optional": false
+      },
+      {
+        "source": "memory_search(query='research_context')",
+        "description": "Prior work and existing knowledge on the topic",
+        "optional": true
+      }
+    ],
+    "max_context_tokens": 12000
+  },
+  "completion_triggers": {
+    "conditions": [
+      "Report written to output path with all sections populated",
+      "All sources cited",
+      "Self-check steps passed"
+    ],
+    "artifacts_expected": [
+      {
+        "path": "artifacts/research/<task_id>.md",
+        "description": "Full research report with executive summary, findings, sources, and confidence assessments",
+        "required": true
+      },
+      {
+        "path": "artifacts/research/<task_id>_sources.json",
+        "description": "Machine-readable list of all sources consulted",
+        "required": false
+      }
+    ],
+    "auto_announce": true
+  },
+  "escalation_pattern": {
+    "triggers": [
+      "task exceeds available context window",
+      "requires code execution to verify claims",
+      "conflicting sources cannot be resolved with available data"
+    ],
+    "escalate_to": "commander",
+    "max_retries": 1,
+    "on_failure": "fallback",
+    "fallback_agent": "commander"
+  },
+  "child_spawning": {
+    "allowed": false,
+    "max_children": 0
+  },
+  "version": "1.0.0"
+}

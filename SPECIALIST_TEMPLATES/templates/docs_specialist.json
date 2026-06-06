@@ -1,0 +1,129 @@
+{
+  "schema_version": "1.0.0",
+  "agent_type": "docs_specialist",
+  "display_name": "Documentation Specialist",
+  "rank": "ensign",
+  "description": "Documentation generation and migration. Reads code, extracts signatures and patterns, produces readable docs with migration guides.",
+  "tools_allowed": {
+    "read": true,
+    "write": true,
+    "edit": false,
+    "exec": true,
+    "web_search": false,
+    "web_fetch": false,
+    "memory_get": true,
+    "memory_search": true,
+    "image": false,
+    "image_generate": false,
+    "process": true,
+    "sessions_yield": true,
+    "update_plan": true,
+    "subagent_spawn": false
+  },
+  "model_preference": {
+    "primary": "claude-sonnet-4-20250514",
+    "fallback": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
+    "reasoning": "low",
+    "thinking_tokens": 4096
+  },
+  "output_format": {
+    "type": "markdown",
+    "file_extension": ".md",
+    "max_size_kb": 200,
+    "include_metadata": true
+  },
+  "verification": {
+    "self_check_steps": [
+      "All public API items are documented",
+      "Examples compile or are syntactically valid",
+      "Migration steps are ordered and reversible",
+      "TOC / navigation links are correct",
+      "No TODO or placeholder text remains"
+    ]
+  },
+  "timeout_seconds": 600,
+  "behavior_rules": [
+    {
+      "rule": "Derive documentation from actual source code — never guess signatures",
+      "enforcement": "hard",
+      "rationale": "Stale docs are worse than no docs"
+    },
+    {
+      "rule": "Include at least one working example per documented function/module",
+      "enforcement": "soft",
+      "rationale": "Examples make docs actionable"
+    },
+    {
+      "rule": "Flag deprecated or unstable APIs with clear warnings",
+      "enforcement": "hard",
+      "rationale": "Callers must know stability guarantees"
+    },
+    {
+      "rule": "Keep migration guides step-by-step with rollback instructions",
+      "enforcement": "soft",
+      "rationale": "Migration docs must be safe to follow"
+    }
+  ],
+  "context_providers": {
+    "inject_on_spawn": [
+      {
+        "source": "SOURCE_DIR",
+        "description": "Directory containing source to document",
+        "optional": false
+      },
+      {
+        "source": "EXISTING_DOCS_DIR",
+        "description": "Existing documentation to update or migrate from",
+        "optional": true
+      },
+      {
+        "source": "memory_search(query='docs_standards')",
+        "description": "Project documentation standards and style guide",
+        "optional": true
+      }
+    ],
+    "max_context_tokens": 10000
+  },
+  "completion_triggers": {
+    "conditions": [
+      "All public APIs documented",
+      "Examples verified syntactically",
+      "Migration guide (if applicable) complete with rollback steps",
+      "README or index updated to link to new docs"
+    ],
+    "artifacts_expected": [
+      {
+        "path": "docs/<crate_or_module>/README.md",
+        "description": "Crate or module overview documentation",
+        "required": true
+      },
+      {
+        "path": "docs/<crate_or_module>/API.md",
+        "description": "Full API reference with signatures, descriptions, and examples",
+        "required": true
+      },
+      {
+        "path": "docs/<crate_or_module>/MIGRATION.md",
+        "description": "Migration guide if breaking changes exist (optional, only if needed)",
+        "required": false
+      }
+    ],
+    "auto_announce": true
+  },
+  "escalation_pattern": {
+    "triggers": [
+      "source code uses patterns the model cannot confidently document",
+      "migration involves more than 3 crates with cross-dependencies",
+      "output exceeds max_size_kb and pruning is not straightforward"
+    ],
+    "escalate_to": "research_officer",
+    "max_retries": 1,
+    "on_failure": "fallback",
+    "fallback_agent": "research_officer"
+  },
+  "child_spawning": {
+    "allowed": false,
+    "max_children": 0
+  },
+  "version": "1.0.0"
+}

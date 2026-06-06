@@ -1,0 +1,69 @@
+{
+  "experiment4Fixed": {
+    "intents": {
+      "what is the fleet status": {
+        "ok": true,
+        "status": 200,
+        "body": {
+          "id": "c604b6ee-ace7-4e7b-a01c-268cbadf37d7",
+          "status": "completed",
+          "path": "fast",
+          "confidence": 0.6151355257499999,
+          "response": "All fleet nodes operational. 18G free disk, 22G RAM available. Nebula at edge, Oracle2 online.",
+          "action": "All fleet nodes operational. 18G free disk, 22G RAM available. Nebula at edge, Oracle2 online.",
+          "reflexId": "fed2296f-748a-4179-8bfc-2339c141f7cc",
+          "durationMs": 10592
+        }
+      },
+      "what rooms are available": {
+        "ok": true,
+        "status": 200,
+        "body": {
+          "id": "a1f15dea-f549-4b7c-bda9-a5d984c2a33e",
+          "status": "completed",
+          "path": "fast",
+          "confidence": 0.6029999999999999,
+          "response": "The gateway at voxelworks-fix.casey-digennaro.workers.dev has 5 working rooms:\n1. /hub — Main hub, entry point\n2. /studio — Creative studio workspace\n3. /lab — Experimentation lab\n4. /deck — Command deck\n5. /game — Game room\nAll 5 are functional. The old gateway at voxelworks-gateway (root + game bugs) is deprecated.",
+          "action": "The gateway at voxelworks-fix.casey-digennaro.workers.dev has 5 working rooms:\n1. /hub — Main hub, entry point\n2. /studio — Creative studio workspace\n3. /lab — Experimentation lab\n4. /deck — Command deck\n5. /game — Game room\nAll 5 are functional. The old gateway at voxelworks-gateway (root + game bugs) is deprecated.",
+          "reflexId": "e4cebaea-1c71-4030-9eb5-e40afd45719f",
+          "durationMs": 10250
+        }
+      },
+      "fleet crate test status": {
+        "ok": true,
+        "status": 200,
+        "body": {
+          "id": "ee7e6057-5970-4e3d-ba33-5c57d288e203",
+          "status": "completed",
+          "path": "fast",
+          "confidence": 0.6151507518768747,
+          "response": "4 core math crates all passing. eisenstein-quantize: 10 tests. pythagorean48: 7 tests. deadband-snr: 10 tests. ternary-spatial: 15 tests. Total: 42 tests, 0 failures. craftmind-ranch evolution engine: 38 Node.js tests passing, 43 farm tasks defined.",
+          "action": "4 core math crates all passing. eisenstein-quantize: 10 tests. pythagorean48: 7 tests. deadband-snr: 10 tests. ternary-spatial: 15 tests. Total: 42 tests, 0 failures. craftmind-ranch evolution engine: 38 Node.js tests passing, 43 farm tasks defined.",
+          "reflexId": "3bf7c139-64c3-4dfe-9996-1355d2f9e722",
+          "durationMs": 642
+        }
+      }
+    },
+    "messageField": {
+      "ok": false,
+      "status": 400,
+      "body": {
+        "error": "Missing required field: intent"
+      }
+    },
+    "queryField": {
+      "ok": false,
+      "status": 400,
+      "body": {
+        "error": "Missing required field: intent"
+      }
+    }
+  },
+  "experiment3Extended": {
+    "studioUrl": "https://voxelworks-fix.casey-digennaro.workers.dev/block-editor/index.html",
+    "labUrl": "https://voxelworks-fix.casey-digennaro.workers.dev/asset-lab/index.html",
+    "navScreenshots": [
+      "hub-nav-lab.png"
+    ]
+  }
+}

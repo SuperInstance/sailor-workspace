@@ -1,0 +1,248 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=VT323&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* OpenRoom custom tokens */
+    --amber-50: #FEF9E8;
+    --amber-100: #FCEFC0;
+    --amber-200: #F9DF8D;
+    --amber-300: #F5CB4E;
+    --amber-400: #E8B820;
+    --amber-500: #C99A10;
+    --amber-600: #A17A0A;
+    --amber-700: #7A5C08;
+
+    --void-900: #0A0A0F;
+    --void-800: #12121A;
+    --void-700: #1A1A26;
+    --void-600: #252536;
+    --void-500: #3A3A50;
+    --void-400: #5A5A78;
+    --void-300: #8A8AA8;
+    --void-200: #B8B8D0;
+    --void-100: #E8E8F0;
+
+    --scholar-blue: #4A90D9;
+    --scout-green: #5BBD76;
+    --builder-orange: #E8913A;
+    --critic-red: #D94A4A;
+    --commander-purple: #9B6DD1;
+    --alchemist-teal: #4AD9C9;
+
+    --xp-gold: #FFD700;
+    --quest-green: #4ADE80;
+    --health-red: #EF4444;
+    --mana-blue: #60A5FA;
+
+    /* Easing tokens */
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-dramatic: cubic-bezier(0.87, 0, 0.13, 1);
+    --ease-float: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-void-900 text-void-200 font-ui;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--void-800);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--void-600);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--void-500);
+  }
+}
+
+@layer components {
+  /* Noise texture overlay */
+  .noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.03;
+    background-image: url('/bg-noise.png');
+    background-repeat: repeat;
+  }
+
+  /* MUD terminal text */
+  .terminal-text {
+    font-family: 'VT323', monospace;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    letter-spacing: 0.05em;
+  }
+
+  /* Display typography */
+  .display-xl {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+
+  .display-lg {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+  }
+
+  .display-md {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+  }
+
+  /* Eyebrow text */
+  .eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--amber-400);
+  }
+
+  /* Gradient backgrounds */
+  .g-void-depth {
+    background: linear-gradient(180deg, #0A0A0F 0%, #12121A 50%, #0A0A0F 100%);
+  }
+
+  .g-amber-glow {
+    background: radial-gradient(ellipse at center, rgba(245,203,78,0.15) 0%, transparent 70%);
+  }
+
+  .g-panel-surface {
+    background: linear-gradient(145deg, #1A1A26 0%, #252536 100%);
+  }
+
+  .g-conservation {
+    background: linear-gradient(90deg, #4ADE80 0%, #F5CB4E 50%, #EF4444 100%);
+  }
+
+  /* Coherence bar gradient */
+  .coherence-gradient {
+    background: linear-gradient(90deg, #4ADE80 0%, #F5CB4E 50%, #EF4444 100%);
+  }
+
+  /* Hide scrollbar for horizontal scroll */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer utilities {
+  /* Agent color utilities */
+  .agent-scholar { color: var(--scholar-blue); }
+  .agent-scout { color: var(--scout-green); }
+  .agent-builder { color: var(--builder-orange); }
+  .agent-critic { color: var(--critic-red); }
+  .agent-commander { color: var(--commander-purple); }
+  .agent-alchemist { color: var(--alchemist-teal); }
+
+  .bg-agent-scholar { background-color: var(--scholar-blue); }
+  .bg-agent-scout { background-color: var(--scout-green); }
+  .bg-agent-builder { background-color: var(--builder-orange); }
+  .bg-agent-critic { background-color: var(--critic-red); }
+  .bg-agent-commander { background-color: var(--commander-purple); }
+  .bg-agent-alchemist { background-color: var(--alchemist-teal); }
+}

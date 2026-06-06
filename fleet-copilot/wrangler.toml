@@ -1,0 +1,25 @@
+# ╔══════════════════════════════════════════════════════╗
+# ║  Fleet Copilot — Cloudflare Pages Config             ║
+# ╚══════════════════════════════════════════════════════╝
+
+name = "fleet-copilot"
+pages_build_output_dir = ".vercel/output/static"
+
+# ── Compatibility ──────────────────────────────────────
+compatibility_date = "2026-05-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ── Environment Variables ────────────────────────────
+[vars]
+FLEET_MODEL = "deepseek-ai/DeepSeek-V4-Flash"
+DEEPINFRA_BASE_URL = "https://api.deepinfra.com/v1/openai"
+
+# ── Secrets (set via wrangler secret) ─────────────────
+# DEEPINFRA_API_KEY — Your DeepInfra API key
+# Run: npx wrangler pages secret put DEEPINFRA_API_KEY
+
+# ── Deployment Instructions ──────────────────────────
+# 1. Install deps:  npm install
+# 2. Build:         npx @cloudflare/next-on-pages
+# 3. Deploy:        npx wrangler pages deploy .vercel/output/static --project-name=fleet-copilot --branch=main
+# 4. Set secret:    npx wrangler pages secret put DEEPINFRA_API_KEY

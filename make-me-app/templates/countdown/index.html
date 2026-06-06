@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    font-family: -apple-system, system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: {{BG_COLOR}};
+    color: {{TEXT_COLOR}};
+  }
+  .card {
+    text-align: center;
+    padding: 2rem;
+  }
+  h1 { font-size: 1.5rem; margin-bottom: 0.5rem; opacity: 0.8; }
+  h2 { font-size: 1rem; margin-bottom: 2rem; opacity: 0.6; }
+  .timer {
+    display: flex; gap: 1rem; justify-content: center;
+    font-size: 3rem; font-weight: 700;
+  }
+  .unit { display: flex; flex-direction: column; align-items: center; }
+  .unit span { font-size: 0.75rem; opacity: 0.5; text-transform: uppercase; }
+  .label { margin-top: 2rem; font-size: 0.875rem; opacity: 0.6; }
+  @media (max-width: 480px) {
+    .timer { font-size: 2rem; gap: 0.5rem; }
+    h1 { font-size: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>{{TITLE}}</h1>
+  <h2>{{SUBTITLE}}</h2>
+  <div class="timer" id="timer">
+    <div class="unit"><span id="days">00</span><span>Days</span></div>
+    <div class="unit"><span id="hours">00</span><span>Hours</span></div>
+    <div class="unit"><span id="minutes">00</span><span>Minutes</span></div>
+    <div class="unit"><span id="seconds">00</span><span>Seconds</span></div>
+  </div>
+  <p class="label">{{LABEL}}</p>
+</div>
+<script>
+const target = new Date("{{TARGET_DATE}}").getTime();
+function tick() {
+  const now = Date.now();
+  const diff = Math.max(0, target - now);
+  document.getElementById('days').textContent = String(Math.floor(diff / 86400000)).padStart(2,'0');
+  document.getElementById('hours').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
+  document.getElementById('minutes').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
+  document.getElementById('seconds').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
+}
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>
