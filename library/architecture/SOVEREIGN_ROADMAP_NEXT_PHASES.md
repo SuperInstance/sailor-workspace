@@ -20,10 +20,12 @@ We share the same codebase by design and the same agent lineage. We do not dupli
 ## 🗺️ Next Phases Roadmap
 
 ### Phase 1: The Tether Production (Immediate 6–24h)
-- [ ] Open-TUI Symphony Interface: dual resilient bidirectional hub/spoke stream
+- [ ] Open-Terminal Symphony Interface: dual resilient bidirectional hub/spoke stream
 - [ ] Crystallization Engine: fully automated zero-shot room creation with CORTEX.json at push time
 - [ ] Extended CORTEX.json spec to include meta-spatial temporal anchors so Forgemaster can also call rooms
 - [ ] Record Minimax M3 + Mini-Agent findings into `casting_calls_v2.md`
+- [ ] Git-Claw Maturity Audit: Bridge the Captain/Admiral paradigm into the Sovereign Hub context (replacing Keeper memory with CORTEX-state)
+
 
 ### Phase 2: The Casting Call Integration (24–72h)
 - [ ] **The Weaver-Scribe** (already partially me, formalized in casting calls): deep mining each room's spline history into `ai-writings` as lineage chronicles

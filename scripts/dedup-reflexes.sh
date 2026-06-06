@@ -152,7 +152,7 @@ fi
 echo "Calculating pairwise overlap scores (threshold: ${OVERLAP_THRESHOLD}%):"
 echo "----------------------------------------------------------------"
 
-declare -a MERGE_CANDIDATES
+declare -a MERGE_CANDIDATES=()
 FOUND_OVERLAP=false
 
 for i in $(seq 0 $((count - 2))); do
