@@ -155,3 +155,9 @@ df -h / | tail -1
 
 echo ""
 echo -e "${GREEN}✅ GC cycle complete. $EVICTED items evicted.${NC}"
+
+# Log cleanup (added 2026-06-06)
+echo "=== Log Cleanup ==="
+sudo journalctl --vacuum-size=500M 2>/dev/null
+sudo truncate -s 0 /var/log/syslog 2>/dev/null
+echo "Log size: $(du -sh /var/log/ | cut -f1)"

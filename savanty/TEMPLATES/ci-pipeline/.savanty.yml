@@ -1,0 +1,21 @@
+# ════════════════════════════════════════════════════════
+# savanty CI/CD Configuration
+# ════════════════════════════════════════════════════════
+
+backend: clingo
+default_veto: portfolio
+symmetry_tolerance: 0.3
+
+reflexes:
+  enable: true
+  bridge: pincher
+  auto_store: true
+
+veto_rules:
+  - name: max_concurrent
+    level: portfolio
+    description: "No more than 3 concurrent deployments"
+    
+  - name: resource_quota
+    level: market
+    description: "Respect total cluster resource limits"
