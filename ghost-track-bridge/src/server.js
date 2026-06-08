@@ -17,6 +17,7 @@ import { createServer } from 'http';
 import { readFileSync, existsSync, mkdirSync, appendFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import Reharmonizer from './reharmonizer.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.env.PORT || '8767', 10);
@@ -35,6 +36,9 @@ function midiName(note) {
 class GhostTrackEngine {
   constructor() {
     this.reset();
+    this.reharmonizer = new Reharmonizer();
+    this.agentFeedback = [];
+    this.accumulatorDelta = 0;
   }
 
   reset() {
@@ -81,10 +85,18 @@ class GhostTrackEngine {
     this.conservationRatios.push(cr);
     if (this.conservationRatios.length > 100) this.conservationRatios.shift();
 
-    // Detect surprise events
+    // Detect surprise events → trigger reharmonization
     if (cr < 0.7) {
       this.surpriseEvents++;
       this.pivotCount++;
+      const avgCR = this.conservationRatios.length > 0
+        ? this.conservationRatios.reduce((a,b) => a+b, 0) / this.conservationRatios.length
+        : cr;
+      const reharmPlan = this.reharmonizer.evaluate(cr, [trit, 0, 0], note, avgCR);
+      if (reharmPlan) {
+        this.activeReharm = reharmPlan;
+        console.log(`  🔄 REHARM: ${reharmPlan.label} (shift ${reharmPlan.shift}, conf ${reharmPlan.confidence})`);
+      }
     }
 
     // Update ghost track predictions
@@ -96,6 +108,26 @@ class GhostTrackEngine {
     this.lastVelocity = velocity;
 
     return this.getGhostTrackState();
+  }
+
+  /**
+   * Process agent feedback — update accumulator.
+   * Called when fleet conductor forwards agent ternary vectors back here.
+   */
+  processFeedback(feedback) {
+    this.agentFeedback.push({...feedback, receivedAt: Date.now()});
+    if (this.agentFeedback.length > 32) this.agentFeedback.shift();
+    if (feedback.ternary_vector && feedback.ternary_vector.length >= 1) {
+      const trit = feedback.ternary_vector[0];
+      const predicted = this.lastTrit * 4;
+      const actual = trit * 4;
+      this.accumulatorDelta += (actual - predicted);
+    }
+    return {
+      accumulatorDelta: this.accumulatorDelta,
+      agentFeedbackCount: this.agentFeedback.length,
+      closedGesture: Math.abs(this.accumulatorDelta) < 2
+    };
   }
 
   /**
@@ -273,6 +305,46 @@ const httpServer = createServer((req, res) => {
       res.writeHead(404);
       res.end('Session not found');
     }
+  } else if (req.url === '/feedback' && req.method === 'POST') {
+    // Accept agent feedback via HTTP (used by fleet conductor)
+    let body = '';
+    req.on('data', chunk => body += chunk.toString());
+    req.on('end', () => {
+      try {
+        const feedback = JSON.parse(body);
+        // Find session or use first available
+        const sessions = Array.from(sessionManager.sessions.values());
+        if (sessions.length > 0 && sessions[0].engine.processFeedback) {
+          const result = sessions[0].engine.processFeedback(feedback);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(result));
+        } else {
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'No active session' }));
+        }
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: err.message }));
+      }
+    });
+  } else if (req.url === '/reharmonize' && req.method === 'GET') {
+    const sessions = Array.from(sessionManager.sessions.values()).map(s => ({
+      id: s.id,
+      reharmonizer: s.engine.reharmonizer?.getState() || null,
+      activeReharm: s.engine.activeReharm || null,
+      accumulatorDelta: s.engine.accumulatorDelta
+    }));
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(sessions, null, 2));
+  } else if (req.url === '/accumulator' && req.method === 'GET') {
+    const sessions = Array.from(sessionManager.sessions.values()).map(s => ({
+      id: s.id,
+      accumulatorDelta: s.engine.accumulatorDelta,
+      agentFeedbackCount: s.engine.agentFeedback.length,
+      lastFeedback: s.engine.agentFeedback[s.engine.agentFeedback.length - 1] || null
+    }));
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(sessions, null, 2));
   } else {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Ghost Track Bridge\n');
@@ -294,6 +366,20 @@ wss.on('connection', (ws, req) => {
       session.lastActivity = Date.now();
       
       switch (msg.type) {
+        case 'feedback': {
+          // Agent feedback from fleet conductor — update accumulator
+          if (session.engine.processFeedback) {
+            const result = session.engine.processFeedback(msg.feedback || msg);
+            ws.send(JSON.stringify({
+              type: 'feedback_ack',
+              sessionId: session.id,
+              accumulatorDelta: result.accumulatorDelta,
+              closedGesture: result.closedGesture
+            }));
+          }
+          break;
+        }
+
         case 'midi': {
           const { note, velocity, trit, bpm, cc } = msg;
           session.ccHistory.push({ ...cc, time: Date.now() });
@@ -304,12 +390,23 @@ wss.on('connection', (ws, req) => {
             note, velocity, trit, bpm || 90, cc
           );
           
-          // Respond with ghost predictions
-          ws.send(JSON.stringify({
+          // Build response with reharmonization plan if active
+          const reharm = session.engine.activeReharm;
+          const response = {
             type: 'ghost',
             sessionId: session.id,
             data: ghostState
-          }));
+          };
+          if (reharm && Date.now() - (session.engine.reharmonizer?.lastPivotTime || 0) < 500) {
+            response.reharmonization = {
+              active: true,
+              shift: reharm.shift,
+              label: reharm.label,
+              confidence: reharm.confidence,
+              alternateTrits: reharm.alternateTrits
+            };
+          }
+          ws.send(JSON.stringify(response));
           break;
         }
 

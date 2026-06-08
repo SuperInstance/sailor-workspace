@@ -194,6 +194,21 @@ function forwardToAgent(agentId, cuePayload, source) {
         status: data.status,
         output: data.output,
       });
+
+      // Forward agent feedback to Ghost Track accumulator
+      if (data.ternary_vector) {
+        const ghostFeedback = {
+          agentId,
+          ternary_vector: data.ternary_vector,
+          source: 'fleet-conductor'
+        };
+        fetch('http://127.0.0.1:8767/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(ghostFeedback)
+        }).catch(() => {}); // fire-and-forget
+      }
+
       return data;
     })
     .catch((err) => {
@@ -489,6 +504,22 @@ function createHttpServer(tminusClient) {
             res.end(JSON.stringify({ agentId, status: 'unreachable' }));
           }
         });
+        return;
+      }
+
+      // GET /harmony — Ghost Track reharmonization state
+      if (path === '/harmony' && req.method === 'GET') {
+        fetch('http://127.0.0.1:8767/reharmonize')
+          .then(r => r.json())
+          .then(data => {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            const onlineCount = Array.from(agentStateCache.values()).filter(a => a.status === 'ok').length;
+            res.end(JSON.stringify({ ghost: data, conductor: { agentsOnline: onlineCount } }, null, 2));
+          })
+          .catch(() => {
+            res.writeHead(502, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Ghost Track unreachable' }));
+          });
         return;
       }
 
