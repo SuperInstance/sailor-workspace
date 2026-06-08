@@ -1,0 +1,629 @@
+{
+  "name": "conversation-lead-sheet",
+  "bpm": 120.0,
+  "tracks": [
+    {
+      "name": "Alice (Host) Pitch",
+      "type": "MIDI",
+      "regions": [
+        {
+          "start": 0,
+          "notes": []
+        }
+      ]
+    },
+    {
+      "name": "Bob (Guest) Pitch",
+      "type": "MIDI",
+      "regions": [
+        {
+          "start": 0.0,
+          "notes": [
+            {
+              "pitch": 63,
+              "velocity": 85,
+              "start": 0.0,
+              "end": 0.25,
+              "label": "welcome"
+            },
+            {
+              "pitch": 62,
+              "velocity": 77,
+              "start": 0.32,
+              "end": 0.5700000000000001,
+              "label": "to"
+            },
+            {
+              "pitch": 61,
+              "velocity": 69,
+              "start": 0.6,
+              "end": 0.85,
+              "label": "the"
+            },
+            {
+              "pitch": 60,
+              "velocity": 61,
+              "start": 0.68,
+              "end": 0.93,
+              "label": "future"
+            },
+            {
+              "pitch": 59,
+              "velocity": 53,
+              "start": 0.94,
+              "end": 1.19,
+              "label": "of"
+            },
+            {
+              "pitch": 58,
+              "velocity": 45,
+              "start": 1.14,
+              "end": 1.39,
+              "label": "conversation"
+            },
+            {
+              "pitch": 60,
+              "velocity": 70,
+              "start": 2.18,
+              "end": 2.43,
+              "label": "can"
+            },
+            {
+              "pitch": 61,
+              "velocity": 78,
+              "start": 2.22,
+              "end": 2.47,
+              "label": "machines"
+            },
+            {
+              "pitch": 62,
+              "velocity": 86,
+              "start": 2.6,
+              "end": 2.85,
+              "label": "really"
+            },
+            {
+              "pitch": 63,
+              "velocity": 95,
+              "start": 3.02,
+              "end": 3.27,
+              "label": "understand"
+            },
+            {
+              "pitch": 64,
+              "velocity": 103,
+              "start": 3.42,
+              "end": 3.67,
+              "label": "how"
+            },
+            {
+              "pitch": 65,
+              "velocity": 111,
+              "start": 3.6,
+              "end": 3.85,
+              "label": "we"
+            },
+            {
+              "pitch": 67,
+              "velocity": 120,
+              "start": 3.8,
+              "end": 4.05,
+              "label": "speak"
+            },
+            {
+              "pitch": 51,
+              "velocity": 85,
+              "start": 4.58,
+              "end": 4.83,
+              "label": "they"
+            },
+            {
+              "pitch": 50,
+              "velocity": 78,
+              "start": 4.68,
+              "end": 4.93,
+              "label": "can"
+            },
+            {
+              "pitch": 49,
+              "velocity": 71,
+              "start": 4.86,
+              "end": 5.11,
+              "label": "analyze"
+            },
+            {
+              "pitch": 48,
+              "velocity": 65,
+              "start": 5.32,
+              "end": 5.57,
+              "label": "patterns"
+            },
+            {
+              "pitch": 48,
+              "velocity": 58,
+              "start": 5.76,
+              "end": 6.01,
+              "label": "in"
+            },
+            {
+              "pitch": 47,
+              "velocity": 51,
+              "start": 6.08,
+              "end": 6.33,
+              "label": "our"
+            },
+            {
+              "pitch": 46,
+              "velocity": 45,
+              "start": 6.2,
+              "end": 6.45,
+              "label": "voice"
+            },
+            {
+              "pitch": 51,
+              "velocity": 85,
+              "start": 7.38,
+              "end": 7.63,
+              "label": "not"
+            },
+            {
+              "pitch": 50,
+              "velocity": 80,
+              "start": 7.64,
+              "end": 7.89,
+              "label": "just"
+            },
+            {
+              "pitch": 49,
+              "velocity": 76,
+              "start": 7.96,
+              "end": 8.21,
+              "label": "what"
+            },
+            {
+              "pitch": 49,
+              "velocity": 71,
+              "start": 8.16,
+              "end": 8.41,
+              "label": "we"
+            },
+            {
+              "pitch": 48,
+              "velocity": 67,
+              "start": 8.4,
+              "end": 8.65,
+              "label": "say"
+            },
+            {
+              "pitch": 48,
+              "velocity": 62,
+              "start": 8.66,
+              "end": 8.91,
+              "label": "but"
+            },
+            {
+              "pitch": 48,
+              "velocity": 58,
+              "start": 8.8,
+              "end": 9.05,
+              "label": "how"
+            },
+            {
+              "pitch": 48,
+              "velocity": 53,
+              "start": 9.04,
+              "end": 9.29,
+              "label": "we"
+            },
+            {
+              "pitch": 47,
+              "velocity": 49,
+              "start": 9.2,
+              "end": 9.45,
+              "label": "say"
+            },
+            {
+              "pitch": 46,
+              "velocity": 45,
+              "start": 9.44,
+              "end": 9.69,
+              "label": "it"
+            },
+            {
+              "pitch": 60,
+              "velocity": 70,
+              "start": 10.12,
+              "end": 10.37,
+              "label": "but"
+            },
+            {
+              "pitch": 60,
+              "velocity": 76,
+              "start": 10.26,
+              "end": 10.51,
+              "label": "is"
+            },
+            {
+              "pitch": 61,
+              "velocity": 82,
+              "start": 10.38,
+              "end": 10.63,
+              "label": "not"
+            },
+            {
+              "pitch": 62,
+              "velocity": 88,
+              "start": 10.52,
+              "end": 10.77,
+              "label": "that"
+            },
+            {
+              "pitch": 63,
+              "velocity": 95,
+              "start": 10.7,
+              "end": 10.95,
+              "label": "just"
+            },
+            {
+              "pitch": 64,
+              "velocity": 101,
+              "start": 10.92,
+              "end": 11.17,
+              "label": "statistics"
+            },
+            {
+              "pitch": 65,
+              "velocity": 107,
+              "start": 11.32,
+              "end": 11.57,
+              "label": "with"
+            },
+            {
+              "pitch": 66,
+              "velocity": 113,
+              "start": 11.7,
+              "end": 11.95,
+              "label": "extra"
+            },
+            {
+              "pitch": 67,
+              "velocity": 120,
+              "start": 11.96,
+              "end": 12.21,
+              "label": "steps"
+            },
+            {
+              "pitch": 51,
+              "velocity": 85,
+              "start": 12.78,
+              "end": 13.03,
+              "label": "the"
+            },
+            {
+              "pitch": 49,
+              "velocity": 75,
+              "start": 12.9,
+              "end": 13.15,
+              "label": "patterns"
+            },
+            {
+              "pitch": 48,
+              "velocity": 65,
+              "start": 13.28,
+              "end": 13.53,
+              "label": "reveal"
+            },
+            {
+              "pitch": 48,
+              "velocity": 55,
+              "start": 13.7,
+              "end": 13.95,
+              "label": "emotional"
+            },
+            {
+              "pitch": 46,
+              "velocity": 45,
+              "start": 14.16,
+              "end": 14.41,
+              "label": "states"
+            },
+            {
+              "pitch": 51,
+              "velocity": 85,
+              "start": 15.52,
+              "end": 15.77,
+              "label": "rising"
+            },
+            {
+              "pitch": 49,
+              "velocity": 75,
+              "start": 15.58,
+              "end": 15.83,
+              "label": "pitch"
+            },
+            {
+              "pitch": 48,
+              "velocity": 65,
+              "start": 16.04,
+              "end": 16.29,
+              "label": "signals"
+            },
+            {
+              "pitch": 48,
+              "velocity": 55,
+              "start": 16.5,
+              "end": 16.75,
+              "label": "a"
+            },
+            {
+              "pitch": 46,
+              "velocity": 45,
+              "start": 16.8,
+              "end": 17.05,
+              "label": "question"
+            },
+            {
+              "pitch": 51,
+              "velocity": 85,
+              "start": 17.92,
+              "end": 18.17,
+              "label": "falling"
+            },
+            {
+              "pitch": 49,
+              "velocity": 71,
+              "start": 18.22,
+              "end": 18.47,
+              "label": "pitch"
+            },
+            {
+              "pitch": 48,
+              "velocity": 58,
+              "start": 18.5,
+              "end": 18.75,
+              "label": "signals"
+            },
+            {
+              "pitch": 46,
+              "velocity": 45,
+              "start": 18.96,
+              "end": 19.21,
+              "label": "certainty"
+            },
+            {
+              "pitch": 60,
+              "velocity": 70,
+              "start": 20.4,
+              "end": 20.65,
+              "label": "so"
+            },
+            {
+              "pitch": 61,
+              "velocity": 78,
+              "start": 20.48,
+              "end": 20.73,
+              "label": "you"
+            },
+            {
+              "pitch": 62,
+              "velocity": 86,
+              "start": 20.64,
+              "end": 20.89,
+              "label": "are"
+            },
+            {
+              "pitch": 63,
+              "velocity": 95,
+              "start": 20.78,
+              "end": 21.03,
+              "label": "mapping"
+            },
+            {
+              "pitch": 64,
+              "velocity": 103,
+              "start": 21.04,
+              "end": 21.29,
+              "label": "feelings"
+            },
+            {
+              "pitch": 65,
+              "velocity": 111,
+              "start": 21.36,
+              "end": 21.61,
+              "label": "to"
+            },
+            {
+              "pitch": 67,
+              "velocity": 120,
+              "start": 21.54,
+              "end": 21.79,
+              "label": "numbers"
+            },
+            {
+              "pitch": 51,
+              "velocity": 85,
+              "start": 22.38,
+              "end": 22.63,
+              "label": "think"
+            },
+            {
+              "pitch": 50,
+              "velocity": 77,
+              "start": 22.62,
+              "end": 22.87,
+              "label": "of"
+            },
+            {
+              "pitch": 49,
+              "velocity": 69,
+              "start": 22.82,
+              "end": 23.07,
+              "label": "it"
+            },
+            {
+              "pitch": 48,
+              "velocity": 61,
+              "start": 22.96,
+              "end": 23.21,
+              "label": "as"
+            },
+            {
+              "pitch": 47,
+              "velocity": 53,
+              "start": 23.16,
+              "end": 23.41,
+              "label": "prasadic"
+            },
+            {
+              "pitch": 46,
+              "velocity": 45,
+              "start": 23.6,
+              "end": 23.85,
+              "label": "midi"
+            },
+            {
+              "pitch": 51,
+              "velocity": 85,
+              "start": 24.66,
+              "end": 24.91,
+              "label": "every"
+            },
+            {
+              "pitch": 50,
+              "velocity": 77,
+              "start": 24.94,
+              "end": 25.19,
+              "label": "word"
+            },
+            {
+              "pitch": 49,
+              "velocity": 69,
+              "start": 25.3,
+              "end": 25.55,
+              "label": "becomes"
+            },
+            {
+              "pitch": 48,
+              "velocity": 61,
+              "start": 25.64,
+              "end": 25.89,
+              "label": "a"
+            },
+            {
+              "pitch": 47,
+              "velocity": 53,
+              "start": 25.92,
+              "end": 26.17,
+              "label": "musical"
+            },
+            {
+              "pitch": 46,
+              "velocity": 45,
+              "start": 26.24,
+              "end": 26.49,
+              "label": "note"
+            },
+            {
+              "pitch": 60,
+              "velocity": 70,
+              "start": 27.12,
+              "end": 27.37,
+              "label": "and"
+            },
+            {
+              "pitch": 61,
+              "velocity": 78,
+              "start": 27.24,
+              "end": 27.49,
+              "label": "you"
+            },
+            {
+              "pitch": 62,
+              "velocity": 86,
+              "start": 27.3,
+              "end": 27.55,
+              "label": "can"
+            },
+            {
+              "pitch": 63,
+              "velocity": 95,
+              "start": 27.46,
+              "end": 27.71,
+              "label": "play"
+            },
+            {
+              "pitch": 64,
+              "velocity": 103,
+              "start": 27.68,
+              "end": 27.93,
+              "label": "that"
+            },
+            {
+              "pitch": 65,
+              "velocity": 111,
+              "start": 27.88,
+              "end": 28.13,
+              "label": "music"
+            },
+            {
+              "pitch": 67,
+              "velocity": 120,
+              "start": 28.14,
+              "end": 28.39,
+              "label": "back"
+            },
+            {
+              "pitch": 51,
+              "velocity": 85,
+              "start": 28.58,
+              "end": 28.83,
+              "label": "or"
+            },
+            {
+              "pitch": 50,
+              "velocity": 78,
+              "start": 29.1,
+              "end": 29.35,
+              "label": "compose"
+            },
+            {
+              "pitch": 49,
+              "velocity": 71,
+              "start": 29.5,
+              "end": 29.75,
+              "label": "entirely"
+            },
+            {
+              "pitch": 48,
+              "velocity": 65,
+              "start": 29.98,
+              "end": 30.23,
+              "label": "new"
+            },
+            {
+              "pitch": 48,
+              "velocity": 58,
+              "start": 30.44,
+              "end": 30.69,
+              "label": "conversations"
+            },
+            {
+              "pitch": 47,
+              "velocity": 51,
+              "start": 31.14,
+              "end": 31.39,
+              "label": "from"
+            },
+            {
+              "pitch": 46,
+              "velocity": 45,
+              "start": 31.6,
+              "end": 31.85,
+              "label": "it"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
