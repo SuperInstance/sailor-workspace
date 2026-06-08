@@ -20,11 +20,15 @@ import json
 import struct
 import time
 import math
+import os
+import queue
 import numpy as np
 import websockets
 import opensmile
 import librosa
 from collections import deque
+
+from stream import StreamingOpenSmile, _config_path
 
 # ─── Configuration ───
 GHOST_BRIDGE_URL = "ws://localhost:8767"
@@ -40,48 +44,133 @@ MIDI_MIN = 0
 
 # ─── OpenSMILE Feature Extractor ───
 class OpenSmileExtractor:
-    """Production-grade voice feature extraction using OpenSMILE."""
+    """Production-grade voice feature extraction using OpenSMILE streaming.
+    
+    Uses StreamingOpenSmile with ring-buffer for true frame-by-frame processing.
+    Features arrive via callback in background thread, put into thread-safe queue,
+    then polled by the async WebSocket handler.
+    """
 
     def __init__(self):
-        # Initialize OpenSMILE with eGeMAPS feature set
-        # These are the 25 LLD: F0, loudness, jitter, shimmer, HNR,
-        # formants (F1-F3 frequency/bandwidth), MFCCs 1-4, spectral features
-        self.smile = opensmile.Smile(
-            feature_set=opensmile.FeatureSet.eGeMAPSv02,
-            feature_level=opensmile.FeatureLevel.LowLevelDescriptors,
-        )
-        self.num_features = self.smile.num_features  # 25
-        print(f"  OpenSMILE initialized: {self.num_features} features")
-
-        # Audio buffer for streaming
-        self.buffer = deque(maxlen=8192)
+        # Thread-safe queue for features from callback thread
+        self._feature_queue = queue.Queue(maxsize=100)
         self.last_features = None
         self.frame_count = 0
+        self.num_features = 25  # eGeMAPS v02 LLD
+        
+        # Initialize streaming
+        config_path = _config_path("egemaps", "v02", "eGeMAPSv02.conf")
+        print(f"  Streaming config: {config_path}")
+        
+        def _on_features(feats: dict, ts: int):
+            """Called from background thread for each frame."""
+            if feats:
+                self.frame_count += 1
+                try:
+                    self._feature_queue.put_nowait(feats)
+                except queue.Full:
+                    pass  # Drop oldest if queue full
+        
+        # Frame timing: hop_size=512 @ 16kHz = 32ms per frame
+        self.stream = StreamingOpenSmile(
+            config_path=config_path,
+            feature_level="lld",
+            callback=_on_features,
+            sample_rate=SAMPLE_RATE,
+            chunk_ms=32,  # One frame at a time
+        )
+        
+        # Start the streaming engine
+        try:
+            self.stream.start()
+            self._streaming = True
+            print(f"  OpenSMILE streaming: {self.num_features} features @ {SAMPLE_RATE}Hz")
+            print(f"  Frame timing: {HOP_SIZE/SAMPLE_RATE*1000:.0f}ms per frame")
+        except Exception as e:
+            print(f"  Streaming init failed: {e}")
+            print(f"  Falling back to batch mode")
+            self._streaming = False
+            self.smile = opensmile.Smile(
+                feature_set=opensmile.FeatureSet.eGeMAPSv02,
+                feature_level=opensmile.FeatureLevel.LowLevelDescriptors,
+            )
+            self.num_features = self.smile.num_features
+            self.buffer = deque(maxlen=8192)
 
     def feed_audio(self, audio_chunk: np.ndarray):
-        """Feed an audio chunk into the buffer."""
-        self.buffer.extend(audio_chunk.tolist())
+        """Feed an audio chunk into the stream."""
+        if self._streaming:
+            self.stream.write(audio_chunk)
+        else:
+            # Fallback batch mode
+            self.buffer.extend(audio_chunk.tolist())
 
     def extract(self) -> dict | None:
-        """Extract features from buffered audio. Returns feature dict or None."""
-        if len(self.buffer) < FRAME_SIZE:
-            return None
-
-        # Extract a frame's worth of audio
-        frame = np.array(list(self.buffer)[:FRAME_SIZE], dtype=np.float32)
-
-        # OpenSMILE expects a waveform array with shape (n_samples,) or (1, n_samples)
-        try:
-            result = self.smile.process_signal(frame, SAMPLE_RATE)
-            self.frame_count += 1
-            return self._parse_features(result)
-        except Exception as e:
-            print(f"  OpenSMILE error: {e}")
-            return None
+        """Get next available feature frame from the stream.
+        Returns feature dict or None if no frame ready.
+        """
+        if self._streaming:
+            try:
+                feats = self._feature_queue.get_nowait()
+                parsed = self._parse_features_from_dict(feats)
+                self.last_features = parsed
+                return parsed
+            except queue.Empty:
+                return None
+        else:
+            # Fallback batch mode
+            if len(self.buffer) < FRAME_SIZE:
+                return None
+            frame = np.array(list(self.buffer)[:FRAME_SIZE], dtype=np.float32)
+            try:
+                result = self.smile.process_signal(frame, SAMPLE_RATE)
+                self.frame_count += 1
+                return self._parse_features(result)
+            except Exception as e:
+                print(f"  OpenSMILE error: {e}")
+                return None
 
     def clear(self):
-        """Clear audio buffer."""
-        self.buffer.clear()
+        """Clear any pending features."""
+        if self._streaming:
+            while not self._feature_queue.empty():
+                try:
+                    self._feature_queue.get_nowait()
+                except queue.Empty:
+                    break
+        else:
+            self.buffer.clear()
+    
+    def _parse_features_from_dict(self, feats: dict) -> dict:
+        """Parse streaming callback features into our feature dict."""
+        features = {}
+        feature_cols = {
+            'F0semitoneFrom27.5Hz_sma3nz': 'f0_semitones',
+            'Loudness_sma3': 'loudness',
+            'jitterLocal_sma3nz': 'jitter',
+            'shimmerLocaldB_sma3nz': 'shimmer',
+            'HNRdBACF_sma3nz': 'hnr',
+            'F1frequency_sma3nz': 'f1_freq',
+            'F1bandwidth_sma3nz': 'f1_bw',
+            'F2frequency_sma3nz': 'f2_freq',
+            'F2bandwidth_sma3nz': 'f2_bw',
+            'F3frequency_sma3nz': 'f3_freq',
+            'F3bandwidth_sma3nz': 'f3_bw',
+            'mfcc1_sma3': 'mfcc_1',
+            'mfcc2_sma3': 'mfcc_2',
+            'mfcc3_sma3': 'mfcc_3',
+            'mfcc4_sma3': 'mfcc_4',
+            'slope0-500_sma3': 'slope_0_500',
+            'slope500-1500_sma3': 'slope_500_1500',
+            'alphaRatio_sma3': 'alpha_ratio',
+            'hammarbergIndex_sma3': 'hammarberg',
+            'spectralFlux_sma3': 'spectral_flux',
+        }
+        for col, key in feature_cols.items():
+            val = feats.get(col)
+            if val is not None and not math.isnan(val) and not math.isinf(val):
+                features[key] = round(float(val), 4)
+        return features
 
     def _parse_features(self, result) -> dict:
         """Parse OpenSMILE DataFrame into a clean feature dict."""
