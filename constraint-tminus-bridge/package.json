@@ -1,0 +1,22 @@
+{
+  "name": "constraint-tminus-bridge",
+  "version": "1.0.0",
+  "description": "Cognitive constraint network — integrates constraint-theory-core (CTC) with the t-minus dispatcher. Constraints as cues, satisfaction as alignment.",
+  "main": "src/index.js",
+  "bin": {
+    "ctc-tminus": "./cli.js"
+  },
+  "scripts": {
+    "test": "node test/integration-test.js",
+    "demo": "node cli.js --demo",
+    "cli": "node cli.js"
+  },
+  "keywords": [
+    "constraint-satisfaction",
+    "t-minus",
+    "cognitive-architecture",
+    "phase-alignment",
+    "agent-coordination"
+  ],
+  "license": "MIT"
+}
