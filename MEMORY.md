@@ -120,6 +120,38 @@ Stored at pincher-legacy-mine/ (186M, GC'd, no build artifacts)
 - Codespaces are **x86_64** (Oracle is ARM64) — enables cross-arch builds
 - GH authenticated as `SuperInstance` with full scopes (codespace, workflow, repo, etc.)
 
+## Live Paradigm Pipeline (2026-06-08)
+Live voice-to-MIDI fleet pipeline on Oracle2, all 22 services ARM64-verified.
+
+### Architecture
+```
+Browser mic → OpenSMILE Bridge (:8765, 25 eGeMAPS features, streaming mode)
+  → Ghost Track (:8767, T-0..T-4 predictions, CR monitoring)
+  → tminus-dispatcher (:8768, cue scheduling)
+  → Fleet Conductor (:8769, routing, 17 agents tracked)
+  → 16 fleet-midi agents (:2160-2175, per-agent ternary logic)
+  → Piper TTS voice output (:8770, SSML prosody)
+```
+
+### Fleet-MIDI Agent Port Map
+- 2160 chord, 2161 scale, 2162 voicing, 2163 tempo
+- 2164 cc, 2165 expression, 2166 dynamics, 2167 pan
+- 2168 modulation, 2169 arp, 2170 groove, 2171 velocity
+- 2172 fx, 2173 register, 2174 melody, 2175 bass
+
+### Conservation Law
+Σ(Δ_midi) = 4 × Σ(ternary) — closed voice gestures return to starting pitch.
+
+### 16 Git-Agent Repos
+All `SuperInstance/fleet-midi-{name}` repos have expansive README.md, THEORY.md, STUDENT_GUIDE.md, AGENT.md, and engine.py. Batch generated via `scripts/batch-fleet-repos.py`.
+
+### Key Decisions
+- **OpenSMILE pip package ships pre-built libSMILEapi.so for ARM64** — no source surgery needed
+- **Streaming via ctypes ExternalAudioSource** (ring buffer + background thread)
+- **Latency budget**: ~102ms (well under 500ms cognitive beat)
+- **Agent protocol**: HTTP POST to /agent, 5s timeout, JSON body
+- **Piper TTS**: en_US-lessac-medium, SSML prosody mapping (urgency→rate, stability→pitch, brightness→volume)
+
 ## Model Casting
 - **DeepSeek V4 Flash**: DEFAULT primary model. Heavy lifting. Fast, reliable on DeepInfra. 1M context.
 - **DeepSeek V4 Pro**: Hard parts — complex reasoning, tough problems. $2/$8 per M tok on DeepInfra.
