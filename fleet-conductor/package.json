@@ -1,0 +1,13 @@
+{
+  "name": "fleet-conductor",
+  "version": "1.0.0",
+  "description": "Fleet MIDI Conductor — routes cues from tminus-dispatcher to 16 fleet-midi ensign agents",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  },
+  "license": "MIT"
+}
