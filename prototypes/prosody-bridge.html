@@ -69,6 +69,8 @@
   <div class="card controls">
     <button id="btnStart" class="btn" disabled>▶ Start</button>
     <button id="btnStop" class="btn" disabled>■ Stop</button>
+    <button id="btnGhostConnect" class="btn">👻 Connect Ghost Track</button>
+    <span id="ghostStatus" class="status">⚪ Ghost Offline</span>
     <span id="status" class="status">⚪ Offline</span>
     <span class="bpm-display" id="bpmDisplay">—</span><span class="midi-clock">BPM</span>
   </div>
@@ -131,9 +133,23 @@
     </div>
   </div>
 
-  <!-- Ghost Track Simulator -->
+  <!-- Ghost Track Simulator (Dual: Local + Server) -->
   <div class="card" style="grid-column: 1 / -1;">
-    <h2>👻 Ghost Track <span style="color:#666;font-weight:normal;">(predictive simulation)</span></h2>
+    <h2>👻 Ghost Track <span id="ghostSourceLabel" style="color:#666;font-weight:normal;">(local prediction)</span></h2>
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
+      <div style="flex:1;">
+        <div style="font-size:0.6em;color:#666;margin-bottom:2px;">T-1 (next 4 beats)</div>
+        <div id="ghostT1" style="font-size:0.75em;color:#ff7f50;">—</div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:0.6em;color:#666;margin-bottom:2px;">T-2 (next measure)</div>
+        <div id="ghostT2" style="font-size:0.75em;color:#8888ff;">—</div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:0.6em;color:#666;margin-bottom:2px;">T-3 (next section)</div>
+        <div id="ghostT3" style="font-size:0.75em;color:#4ade80;">—</div>
+      </div>
+    </div>
     <div class="ghost-tracks" id="ghostTracks">
       <div style="position:absolute;bottom:2px;left:4px;font-size:0.55em;color:#444;">predicted</div>
     </div>
@@ -142,6 +158,8 @@
       <span class="val" id="crValue" style="color:#8888ff;">—</span>
       <span class="label">Surprise Level</span>
       <span class="val" id="surpriseLevel" style="color:#ff4444;">0%</span>
+      <span class="label">Session Events</span>
+      <span class="val" id="sessionEvents" style="color:#666;">0</span>
     </div>
   </div>
 
@@ -323,6 +341,14 @@ function processAudio() {
     
     // BPM estimate from note rhythm
     updateBPM();
+    
+    // Send to ghost track bridge (if connected)
+    sendMIDItoGhost(noteInt, vel, trit, state.bpm, {
+      modWheel: Math.round(vel * 0.8),
+      breath: breathVal,
+      expression: Math.round(Math.min(127, Math.abs(f0 - 200) * 0.5)),
+      attention: Math.round(Math.min(127, (breathVal + Math.abs(noteInt - 60)) * 0.5))
+    });
     
     state.lastNote = noteInt;
     state.lastActiveTime = performance.now();
@@ -524,6 +550,148 @@ function logEvent(msg) {
 }
 
 // ─── Start / Stop ───
+// ─── WebSocket Ghost Track Client ───
+let ws = null;
+let wsSessionId = null;
+let ghostConnected = false;
+const GHOST_URL = `ws://${location.hostname}:8767`;
+
+function connectGhostTrack() {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.close();
+    return;
+  }
+  
+  try {
+    ws = new WebSocket(GHOST_URL);
+    
+    ws.onopen = () => {
+      ghostConnected = true;
+      $('ghostStatus').textContent = '👻 Ghost Online';
+      $('ghostStatus').className = 'status recording';
+      $('ghostSourceLabel').innerHTML = '<span style="color:#4ade80;font-weight:normal;">(server predictions)</span>';
+      $('btnGhostConnect').textContent = '🔌 Disconnect';
+      logEvent('👻 Connected to Ghost Track Bridge at :8767');
+    };
+    
+    ws.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        
+        if (msg.type === 'welcome') {
+          wsSessionId = msg.sessionId;
+          logEvent(`👻 Ghost session: ${msg.sessionId}`);
+          
+        } else if (msg.type === 'ghost') {
+          const d = msg.data;
+          
+          // Update CR from server
+          if (d.cr !== undefined) {
+            const serverCR = d.cr;
+            const serverSurprise = d.surprise || (1 - serverCR);
+            crValue.textContent = serverCR.toFixed(3);
+            if (crValue.textContent !== '—') {
+              surpriseLevel.textContent = `${(serverSurprise * 100).toFixed(0)}%`;
+            }
+            $('sessionEvents').textContent = d.totalEvents || '0';
+          }
+          
+          // Update ghost track predictions from server
+          if (d.T1 && d.T1.length) {
+            $('ghostT1').textContent = d.T1.slice(0, 4).map(n => n.noteName).join(' · ');
+          }
+          if (d.T2 && d.T2.length) {
+            $('ghostT2').textContent = d.T2.slice(0, 8).map(n => n.noteName).join(' · ');
+          }
+          if (d.T3 && d.T3.length) {
+            $('ghostT3').textContent = d.T3.slice(0, 8).map(n => n.noteName).join(' · ');
+          }
+          
+          // Render ghost visualization from server
+          if (d.T0) {
+            renderServerGhostTrack(d.T0.note, d.T1 ? d.T1[0]?.note : null);
+          }
+          
+          // Reharmonization alert from server
+          if (d.cr < 0.7 && d.totalEvents > 5) {
+            logEvent(`⚠️ REHARMONIZE (CR=${d.cr.toFixed(3)})`);
+          }
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
+    };
+    
+    ws.onerror = () => {
+      logEvent(`❌ Ghost connection error (is server running on :8767?)`);
+      disconnectGhostTrack();
+    };
+    
+    ws.onclose = () => {
+      disconnectGhostTrack();
+    };
+  } catch (e) {
+    logEvent(`❌ Ghost connect failed: ${e.message}`);
+  }
+}
+
+function disconnectGhostTrack() {
+  ghostConnected = false;
+  wsSessionId = null;
+  $('ghostStatus').textContent = '⚪ Ghost Offline';
+  $('ghostStatus').className = 'status';
+  $('ghostSourceLabel').innerHTML = '<span style="color:#666;font-weight:normal;">(local prediction)</span>';
+  $('btnGhostConnect').textContent = '👻 Connect Ghost Track';
+  if (ws) {
+    try { ws.close(); } catch(e) {}
+    ws = null;
+  }
+}
+
+function sendMIDItoGhost(note, velocity, trit, bpm, ccData) {
+  if (!ws || ws.readyState !== WebSocket.OPEN) return;
+  try {
+    ws.send(JSON.stringify({
+      type: 'midi',
+      note,
+      velocity,
+      trit,
+      bpm: bpm || 90,
+      cc: ccData
+    }));
+  } catch (e) {
+    // Silently fail
+  }
+}
+
+function renderServerGhostTrack(predicted, actual) {
+  // Only render if ghost tracks div exists
+  const container = $('ghostTracks');
+  if (!container) return;
+  container.innerHTML = '';
+  container.innerHTML += '<div style="position:absolute;bottom:2px;left:4px;font-size:0.55em;color:#444;">predicted</div>';
+  
+  if (!predicted && !actual) return;
+  
+  if (predicted) {
+    const el = document.createElement('div');
+    el.className = 'ghost-note';
+    const y = 60 - ((predicted - 36) / 60) * 60;
+    el.style.cssText = `bottom:${Math.max(0, Math.min(54, y))}px;left:10%;width:40px;background:#ff7f50;opacity:0.5;`;
+    container.appendChild(el);
+  }
+  
+  if (actual) {
+    const el = document.createElement('div');
+    const y = 60 - ((actual - 36) / 60) * 60;
+    el.style.cssText = `position:absolute;bottom:${Math.max(0, Math.min(54, y))}px;left:55%;width:40px;height:3px;background:#4ade80;border-radius:1px;opacity:0.8;`;
+    container.appendChild(el);
+  }
+}
+
+// Connect ghost track button
+$('btnGhostConnect').onclick = connectGhostTrack;
+
 btnStart.onclick = async () => {
   try {
     state.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
