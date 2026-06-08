@@ -65,6 +65,7 @@ const AGENT_REGISTRY = {
   register:     { port: 2173, name: 'fleet-midi-register',      roles: ['note'] },
   melody:       { port: 2174, name: 'fleet-midi-melody',        roles: ['note', 'velocity'] },
   bass:         { port: 2175, name: 'fleet-midi-bass',          roles: ['note', 'velocity'] },
+  piper:        { port: 8770, name: 'piper-voice',            roles: ['voice', 'text'] },
 };
 
 // ─── Agent State Cache ────────────────────────────────────────────────
