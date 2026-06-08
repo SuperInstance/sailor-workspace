@@ -1,0 +1,18 @@
+{
+  "repo": "fleet-midi-text2midi",
+  "ensign": "Rhapsodia",
+  "demos": {
+    "jazz_piano_vamp": {"tracks": 3, "notes": 72, "tokens": 83, "key": "C", "tempo": 120},
+    "minor_blues": {"tracks": 3, "notes": 68, "tokens": 79, "key": "A", "tempo": 120},
+    "ambient_pad": {"tracks": 3, "notes": 68, "tokens": 79, "key": "D", "tempo": 80},
+    "funky_clavinet": {"tracks": 3, "notes": 68, "tokens": 79, "key": "E", "tempo": 110},
+    "classical_quartet": {"tracks": 3, "notes": 68, "tokens": 79, "key": "G", "tempo": 140},
+    "lofi_beat": {"tracks": 3, "notes": 68, "tokens": 79, "key": "F#", "tempo": 85},
+    "bossa_nova": {"tracks": 3, "notes": 68, "tokens": 79, "key": "Dm", "tempo": 100},
+    "cinematic_swell": {"tracks": 3, "notes": 68, "tokens": 79, "key": "Cm", "tempo": 60},
+    "edm_synth": {"tracks": 3, "notes": 68, "tokens": 79, "key": "Gm", "tempo": 128},
+    "bebop_sax": {"tracks": 3, "notes": 68, "tokens": 79, "key": "Bb", "tempo": 160},
+    "ambient_drone": {"tracks": 3, "notes": 68, "tokens": 79, "key": "Eb", "tempo": 50},
+    "fingerstyle": {"tracks": 3, "notes": 68, "tokens": 79, "key": "A", "tempo": 90}
+  }
+}

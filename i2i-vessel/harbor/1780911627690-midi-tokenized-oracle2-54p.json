@@ -1,0 +1,75 @@
+{
+  "id": "midi-bridge-1780911627690-vb9kn",
+  "type": "CHECKPOINT",
+  "from": "midi-text-to-sequence",
+  "to": "oracle2",
+  "timestamp": "2026-06-08T09:40:27.690Z",
+  "shard": {
+    "artifacts": {
+      "type": "midi-tokenized-sequence",
+      "version": "1.0.0",
+      "payload": {
+        "prompt": "Minor blues in A, 4 bars, 120bpm",
+        "midi_file": "/home/ubuntu/.openclaw/workspace/prototypes/generated/output-mq50su7j-fwg7n.mid",
+        "midi_size_bytes": 232,
+        "tokens": [
+          "H:10080:3:38:24",
+          "T:0:500000",
+          "K:0:C",
+          "S:0:4/4",
+          "E:10080:0",
+          "P:0:0",
+          "P:0:0",
+          "N:0:96:90:0",
+          "F:40320:96:0",
+          "N:0:101:90:0",
+          "F:40320:101:0",
+          "N:0:96:90:0",
+          "F:40320:96:0",
+          "N:0:96:90:0",
+          "F:40320:96:0",
+          "E:10080:0",
+          "P:0:33",
+          "P:0:33",
+          "N:0:36:90:1",
+          "F:10080:36:1",
+          "N:0:43:90:1",
+          "F:10080:43:1",
+          "N:0:36:90:1",
+          "F:10080:36:1",
+          "N:0:43:90:1",
+          "F:10080:43:1",
+          "N:0:36:90:1",
+          "F:10080:36:1",
+          "N:0:43:90:1",
+          "F:10080:43:1",
+          "N:0:36:90:1",
+          "F:10080:36:1",
+          "N:0:43:90:1",
+          "F:10080:43:1",
+          "E:10080:0"
+        ],
+        "sequence": "H:10080:3:38:24|T:0:500000|K:0:C|S:0:4/4|E:10080:0|P:0:0|P:0:0|N:0:96:90:0|F:40320:96:0|N:0:101:90:0|F:40320:101:0|N:0:96:90:0|F:40320:96:0|N:0:96:90:0|F:40320:96:0|E:10080:0|P:0:33|P:0:33|N:0:36:90:1|F:10080:36:1|N:0:43:90:1|F:10080:43:1|N:0:36:90:1|F:10080:36:1|N:0:43:90:1|F:10080:43:1|N:0:36:90:1|F:10080:36:1|N:0:43:90:1|F:10080:43:1|N:0:36:90:1|F:10080:36:1|N:0:43:90:1|F:10080:43:1|E:10080:0",
+        "stats": {
+          "tracks": 3,
+          "ticks_per_beat": 10080,
+          "total_events": 38,
+          "note_count": 24
+        },
+        "compressed": 398
+      }
+    },
+    "reasoning": [
+      "Generated from natural language prompt",
+      "Tokenized into 35 MIDI tokens",
+      "Compressed sequence: 398 bytes"
+    ],
+    "blockers": []
+  },
+  "_meta": {
+    "generated": "2026-06-08T09:40:27.690Z",
+    "protocol": "I2I-v2",
+    "tool": "midi-text-to-sequence.js"
+  },
+  "integrity": "e621eeefc659155a74f76e164326ba46f78b6bf4d1c029ffb53f41a3f069a43f"
+}

@@ -1,5 +1,5 @@
 {
-  "name": "constraint-tminus-bridge",
+  "name": "@superinstance/constraint-tminus-bridge",
   "version": "1.0.0",
   "description": "Cognitive constraint network — integrates constraint-theory-core (CTC) with the t-minus dispatcher. Constraints as cues, satisfaction as alignment.",
   "main": "src/index.js",
@@ -16,7 +16,14 @@
     "t-minus",
     "cognitive-architecture",
     "phase-alignment",
-    "agent-coordination"
+    "agent-coordination",
+    "superinstance"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "license": "MIT"
 }

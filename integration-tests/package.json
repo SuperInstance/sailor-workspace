@@ -1,0 +1,9 @@
+{
+  "name": "symphony-integration-tests",
+  "version": "1.0.0",
+  "description": "Full-stack integration tests for all 6 Symphony systems",
+  "private": true,
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}

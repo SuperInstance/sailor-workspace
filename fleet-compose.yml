@@ -1,0 +1,74 @@
+version: '3.8'
+
+# SuperInstance Fleet — Full Stack
+# Start: docker compose up -d
+# Stop:  docker compose down
+
+x-midi-net: &midi-net
+  networks:
+    - midi-net
+
+services:
+  # ===== CORE FLEET =====
+  fleet-bridge:
+    build: https://github.com/SuperInstance/fleet-bridge.git
+    ports: ["4000:4000"]
+    networks: [fleet-net]
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4000/health')"]
+      interval: 30s
+
+  tminus-dispatcher:
+    build: https://github.com/SuperInstance/tminus-dispatcher.git
+    ports: ["4001:4001"]
+    networks: [fleet-net]
+
+  # ===== MIDI FLEET =====
+  midi-text2midi:
+    build: https://github.com/SuperInstance/fleet-midi-text2midi.git
+    ports: ["3001:3001"]
+    <<: *midi-net
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health')"]
+      interval: 30s
+
+  midi-tidalcycles:
+    build: https://github.com/SuperInstance/fleet-midi-tidalcycles.git
+    ports: ["3002:3002"]
+    <<: *midi-net
+
+  midi-musiclang:
+    build: https://github.com/SuperInstance/fleet-midi-musiclang.git
+    ports: ["3003:3003"]
+    <<: *midi-net
+
+  midi-generator:
+    build: https://github.com/SuperInstance/fleet-midi-generator.git
+    ports: ["3004:3004"]
+    <<: *midi-net
+
+  midi-tokenizer:
+    build: https://github.com/SuperInstance/fleet-midi-tokenizer.git
+    ports: ["3005:3005"]
+    <<: *midi-net
+
+  midi-sonicpi:
+    build: https://github.com/SuperInstance/fleet-midi-sonicpi.git
+    ports: ["3006:3006"]
+    <<: *midi-net
+
+  midi-foxdot:
+    build: https://github.com/SuperInstance/fleet-midi-foxdot.git
+    ports: ["3007:3007"]
+    <<: *midi-net
+
+  midi-symusic:
+    build: https://github.com/SuperInstance/fleet-midi-symusic.git
+    ports: ["3008:3008"]
+    <<: *midi-net
+
+networks:
+  fleet-net:
+    driver: bridge
+  midi-net:
+    driver: bridge

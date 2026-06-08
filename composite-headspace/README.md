@@ -5,6 +5,7 @@
 [![Tests: 51/51](https://img.shields.io/badge/tests-51%2F51-passing-brightgreen)](https://github.com/SuperInstance/composite-headspace)
 [![Node ≥18](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js)](https://nodejs.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![MIDI DAW](https://img.shields.io/badge/Cognitive-DAW-8B0000?style=flat)](../prototypes/README.md)
 
 ---
 

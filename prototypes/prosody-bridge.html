@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prosody Bridge — Live Voice-to-MIDI Prototype</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'SF Mono', 'Fira Code', monospace; background: #0a0a0a; color: #e0e0e0; padding: 20px; }
+  h1 { font-size: 1.2em; color: #ff7f50; margin-bottom: 4px; letter-spacing: 1px; }
+  .subtitle { color: #888; font-size: 0.75em; margin-bottom: 20px; }
+  
+  .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 1000px; }
+  
+  .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 14px; }
+  .card h2 { font-size: 0.7em; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+  
+  .controls { grid-column: 1 / -1; display: flex; gap: 10px; align-items: center; }
+  .btn { background: #2a2a2a; border: 1px solid #444; color: #ccc; padding: 8px 18px; border-radius: 4px; font-family: inherit; font-size: 0.8em; cursor: pointer; }
+  .btn:hover { background: #333; }
+  .btn.active { background: #ff7f50; color: #000; border-color: #ff7f50; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .status { font-size: 0.7em; color: #666; padding: 6px 12px; border: 1px solid #2a2a2a; border-radius: 4px; }
+  .status.recording { color: #4ade80; border-color: #4ade80; }
+  
+  .meter { width: 100%; height: 6px; background: #1a1a1a; border-radius: 3px; overflow: hidden; margin: 4px 0; }
+  .meter-fill { height: 100%; border-radius: 3px; transition: width 60ms linear; }
+  
+  .piano-roll { position: relative; height: 200px; background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 4px; overflow: hidden; }
+  .piano-grid { position: absolute; width: 100%; height: 100%; }
+  .piano-note { position: absolute; height: 3px; border-radius: 1px; min-width: 2px; transition: opacity 0.1s; }
+  
+  .value-row { display: flex; justify-content: space-between; font-size: 0.8em; padding: 4px 0; }
+  .value-row .label { color: #666; }
+  .value-row .val { color: #ff7f50; font-weight: bold; }
+  
+  .midi-out { font-size: 0.7em; color: #555; margin-top: 8px; padding: 6px; background: #0d0d0d; border-radius: 4px; max-height: 80px; overflow-y: scroll; word-break: break-all; }
+  
+  .grid-label { color: #444; font-size: 0.6em; }
+  
+  .config { grid-column: 1 / -1; display: flex; gap: 12px; flex-wrap: wrap; }
+  .config label { font-size: 0.7em; color: #666; display: flex; align-items: center; gap: 6px; }
+  .config input[type="range"] { width: 80px; accent-color: #ff7f50; }
+  .config input[type="number"] { width: 50px; background: #1a1a1a; border: 1px solid #333; color: #ccc; padding: 2px 6px; border-radius: 3px; font-family: inherit; font-size: 0.9em; }
+  
+  .ghost-tracks { height: 60px; position: relative; background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 4px; overflow: hidden; }
+  .ghost-note { position: absolute; height: 2px; opacity: 0.3; border-radius: 1px; background: #ff7f50; }
+  .reharm-alert { color: #ff4444; font-size: 0.65em; animation: pulse 1s ease-in-out; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  
+  .ternary-display { display: flex; gap: 6px; align-items: center; font-size: 1.2em; }
+  .ternary-badge { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8em; }
+  .ternary-plus { background: #4ade80; color: #000; }
+  .ternary-zero { background: #666; color: #fff; }
+  .ternary-minus { background: #ff4444; color: #fff; }
+  
+  .midi-clock { font-size: 0.7em; color: #888; }
+  .bpm-display { font-size: 1.4em; color: #ff7f50; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>🎤 Prosody Bridge</h1>
+<div class="subtitle">Live Voice-to-MIDI · SuperInstance Fleet · α prototype</div>
+
+<div class="dashboard">
+
+  <!-- Controls -->
+  <div class="card controls">
+    <button id="btnStart" class="btn" disabled>▶ Start</button>
+    <button id="btnStop" class="btn" disabled>■ Stop</button>
+    <span id="status" class="status">⚪ Offline</span>
+    <span class="bpm-display" id="bpmDisplay">—</span><span class="midi-clock">BPM</span>
+  </div>
+
+  <!-- Pitch (F0) Card -->
+  <div class="card" style="grid-column: 1;">
+    <h2>🎵 Pitch (F0)</h2>
+    <div class="value-row"><span class="label">Hz</span><span class="val" id="f0Hz">—</span></div>
+    <div class="value-row"><span class="label">MIDI Note</span><span class="val" id="midiNote">—</span></div>
+    <div class="value-row"><span class="label">Pitch Bend</span><span class="val" id="pitchBend">—</span></div>
+    <div class="meter"><div class="meter-fill" id="pitchMeter" style="width:0%;background:#ff7f50;"></div></div>
+  </div>
+
+  <!-- Energy Card -->
+  <div class="card" style="grid-column: 2;">
+    <h2>🔊 Energy</h2>
+    <div class="value-row"><span class="label">RMS Energy</span><span class="val" id="rmsEnergy">—</span></div>
+    <div class="value-row"><span class="label">Velocity (0-127)</span><span class="val" id="midiVelocity">—</span></div>
+    <div class="value-row"><span class="label">Breath CC#2</span><span class="val" id="breathCC">—</span></div>
+    <div class="meter"><div class="meter-fill" id="energyMeter" style="width:0%;background:#4ade80;"></div></div>
+  </div>
+
+  <!-- Ternary Classification Card -->
+  <div class="card" style="grid-column: 1;">
+    <h2>🧮 Trit Classification</h2>
+    <div class="value-row"><span class="label">Ternary (-1/0/+1)</span><span class="val" id="tritVal">—</span></div>
+    <div class="ternary-display">
+      <span class="ternary-badge ternary-plus" id="tritPlus">+1</span>
+      <span class="ternary-badge ternary-zero" id="tritZero">0</span>
+      <span class="ternary-badge ternary-minus" id="tritMinus">-1</span>
+    </div>
+    <div class="value-row" style="margin-top:6px;">
+      <span class="label">Classification Logic</span>
+      <span class="val" id="classifyLogic" style="font-size:0.75em;color:#888;">(velocity ∈ [40,100]) ∧ (pitch ∈ [100Hz,400Hz])</span>
+    </div>
+  </div>
+
+  <!-- MIDI CC Stream Card -->
+  <div class="card" style="grid-column: 2;">
+    <h2>📟 MIDI CC Stream</h2>
+    <div class="value-row"><span class="label">CC#1 Mod Wheel</span><span class="val" id="cc1">0</span></div>
+    <div class="value-row"><span class="label">CC#2 Breath</span><span class="val" id="cc2">0</span></div>
+    <div class="value-row"><span class="label">CC#11 Expression</span><span class="val" id="cc11">0</span></div>
+    <div class="value-row"><span class="label">CC#16 Attention</span><span class="val" id="cc16">0</span></div>
+    <div class="meter"><div class="meter-fill" id="ccMeter" style="width:0%;background:#8888ff;"></div></div>
+    <div class="value-row" style="margin-top:6px;">
+      <span class="label">CC Output</span>
+      <span class="val" id="ccOut" style="font-size:0.6em;color:#666;">N/A (virtual MIDI port or WebMIDI)</span>
+    </div>
+  </div>
+
+  <!-- Piano Roll -->
+  <div class="card" style="grid-column: 1 / -1;">
+    <h2>🎹 Live Piano Roll</h2>
+    <div class="piano-roll" id="pianoRoll">
+      <div class="piano-grid" id="pianoGrid"></div>
+    </div>
+    <div class="value-row" style="margin-top:4px;">
+      <span class="grid-label">C2 ────── C3 ────── C4 ────── C5 ────── C6 ────── C7</span>
+    </div>
+  </div>
+
+  <!-- Ghost Track Simulator -->
+  <div class="card" style="grid-column: 1 / -1;">
+    <h2>👻 Ghost Track <span style="color:#666;font-weight:normal;">(predictive simulation)</span></h2>
+    <div class="ghost-tracks" id="ghostTracks">
+      <div style="position:absolute;bottom:2px;left:4px;font-size:0.55em;color:#444;">predicted</div>
+    </div>
+    <div class="value-row">
+      <span class="label">Conservation Ratio (CR)</span>
+      <span class="val" id="crValue" style="color:#8888ff;">—</span>
+      <span class="label">Surprise Level</span>
+      <span class="val" id="surpriseLevel" style="color:#ff4444;">0%</span>
+    </div>
+  </div>
+
+  <!-- MIDI Out Log -->
+  <div class="card" style="grid-column: 1 / -1;">
+    <h2>📤 MIDI Event Log</h2>
+    <div class="midi-out" id="midiLog">Waiting for input...</div>
+  </div>
+
+  <!-- Config -->
+  <div class="card config">
+    <label>Sensitivity <input type="range" id="sensitivity" min="0.1" max="2.0" step="0.1" value="1.0"></label>
+    <label>Base Note <input type="number" id="baseNote" value="60" min="36" max="96"></label>
+    <label>Max Notes <input type="number" id="maxNotes" value="4" min="1" max="16"></label>
+    <label>Log Level <select id="logLevel" style="background:#1a1a1a;border:1px solid #333;color:#ccc;padding:2px 6px;border-radius:3px;font-family:inherit;">
+      <option value="all">All Events</option>
+      <option value="cc">CC Only</option>
+      <option value="note">Note Only</option>
+      <option value="off">Off</option>
+    </select></label>
+  </div>
+
+</div>
+
+<script>
+// ─── State ───
+const state = {
+  recording: false,
+  audioCtx: null,
+  analyser: null,
+  source: null,
+  stream: null,
+  rafId: null,
+  noteHistory: [],
+  ghostHistory: [],
+  historyTimer: null,
+  lastF0: 0,
+  lastNote: 60,
+  lastVelocity: 0,
+  lastBreath: 0,
+  lastTrit: 0,
+  cr: 0,
+  surprise: 0,
+  bpm: 90,
+  ghostPrediction: null,
+  lastActiveTime: 0
+};
+
+// ─── DOM refs ───
+const $ = id => document.getElementById(id);
+const btnStart = $('btnStart');
+const btnStop = $('btnStop');
+const statusEl = $('status');
+const f0Hz = $('f0Hz');
+const midiNote = $('midiNote');
+const pitchBend = $('pitchBend');
+const rmsEnergy = $('rmsEnergy');
+const midiVelocity = $('midiVelocity');
+const breathCC = $('breathCC');
+const tritVal = $('tritVal');
+const crValue = $('crValue');
+const surpriseLevel = $('surpriseLevel');
+const bpmDisplay = $('bpmDisplay');
+const midiLog = $('midiLog');
+const pianoGrid = $('pianoGrid');
+const ghostTracks = $('ghostTracks');
+
+// ─── Piano Grid ───
+function initPianoGrid() {
+  pianoGrid.innerHTML = '';
+  for (let n = 36; n <= 96; n++) {
+    // Every 12th = C
+    const key = n % 12;
+    const isWhite = [0,2,4,5,7,9,11].includes(key);
+    if (isWhite) {
+      const div = document.createElement('div');
+      const y = 200 - ((n - 36) / 60) * 200;
+      div.style.cssText = `position:absolute;left:0;right:0;top:${y}px;height:1px;background:#1a1a1a;`;
+      pianoGrid.appendChild(div);
+    }
+  }
+}
+initPianoGrid();
+
+// ─── Audio processing ───
+function midiFromFreq(freq) {
+  if (freq <= 0) return null;
+  return 12 * Math.log2(freq / 440) + 69;
+}
+
+function freqFromNote(note) {
+  return 440 * Math.pow(2, (note - 69) / 12);
+}
+
+function autoCorrelate(buf, sampleRate) {
+  const SIZE = buf.length;
+  const rms = Math.sqrt(buf.reduce((s, v) => s + v*v, 0) / SIZE);
+  if (rms < 0.01) return -1; // too quiet
+  
+  // Find first zero crossing
+  let firstZero, lastZero;
+  for (let i = 1; i < SIZE; i++) {
+    if (buf[i-1] < 0 && buf[i] >= 0) { firstZero = i; break; }
+  }
+  if (!firstZero) return -1;
+  
+  // Autocorrelation
+  let bestCorr = 0, bestPeriod = 0;
+  for (let period = Math.max(2, Math.floor(sampleRate / 2000)); period < Math.min(SIZE/2, Math.floor(sampleRate / 50)); period++) {
+    let corr = 0;
+    for (let i = 0; i < SIZE/2; i++) {
+      corr += Math.abs(buf[i] - buf[i + period]);
+    }
+    const corrNorm = corr / period;
+    if (corrNorm > bestCorr) {
+      bestCorr = corrNorm;
+      bestPeriod = period;
+    }
+  }
+  
+  if (bestPeriod === 0 || bestCorr < 0.1) return -1;
+  return sampleRate / bestPeriod;
+}
+
+function processAudio() {
+  if (!state.recording) return;
+  
+  const bufferLength = state.analyser.frequencyBinCount;
+  const timeData = new Float32Array(bufferLength);
+  state.analyser.getFloatTimeDomainData(timeData);
+  
+  const sampleRate = state.audioCtx.sampleRate;
+  
+  // Pitch detection via autocorrelation
+  const f0 = autoCorrelate(timeData, sampleRate);
+  const hasVoice = f0 > 60 && f0 < 1000;
+  
+  // Energy (RMS)
+  const rms = Math.sqrt(timeData.reduce((s, v) => s + v*v, 0) / timeData.length);
+  
+  // Update displays
+  if (hasVoice) {
+    state.lastF0 = f0;
+    const noteNum = midiFromFreq(f0);
+    const noteInt = Math.round(noteNum);
+    const cents = (noteNum - noteInt) * 100;
+    
+    f0Hz.textContent = f0.toFixed(1);
+    midiNote.textContent = `${noteInt} (${midiName(noteInt)})`;
+    pitchBend.textContent = `${cents > 0 ? '+' : ''}${cents.toFixed(0)}¢`;
+    $('pitchMeter').style.width = `${Math.min(100, (f0 - 60) / 10)}%`;
+    
+    // Velocity from RMS (mapped 0-127)
+    const vel = Math.min(127, Math.round(rms * 200));
+    state.lastVelocity = vel;
+    midiVelocity.textContent = vel;
+    rmsEnergy.textContent = (rms * 1000).toFixed(1);
+    $('energyMeter').style.width = `${Math.min(100, vel * 0.8)}%`;
+    
+    // Breath CC#2 from silence before speech + energy envelope
+    const breathVal = Math.min(127, Math.max(0, Math.round((1 - Math.exp(-rms * 50)) * 127)));
+    state.lastBreath = breathVal;
+    breathCC.textContent = breathVal;
+    
+    // Note on the piano roll
+    addNoteToRoll(noteInt, Math.round(noteNum), vel, breathVal, cents);
+    
+    // Ternary classification
+    const trit = classifyTrit(vel, f0, noteInt);
+    state.lastTrit = trit;
+    updateTritDisplay(trit);
+    tritVal.textContent = trit;
+    
+    // MIDI CC values
+    updateCC(vel, breathVal, f0, noteInt);
+    
+    // Update ghost track and CR
+    updateGhostTrack(noteInt, trit);
+    
+    // BPM estimate from note rhythm
+    updateBPM();
+    
+    state.lastNote = noteInt;
+    state.lastActiveTime = performance.now();
+  } else {
+    f0Hz.textContent = '—';
+    midiNote.textContent = '—';
+    pitchBend.textContent = '—';
+    $('pitchMeter').style.width = '0%';
+    
+    // Fade velocity on silence
+    state.lastVelocity = Math.max(0, state.lastVelocity - 5);
+    midiVelocity.textContent = state.lastVelocity;
+    rmsEnergy.textContent = '—';
+    $('energyMeter').style.width = `${state.lastVelocity * 0.8}%`;
+    
+    // Breath decays on silence
+    state.lastBreath = Math.max(0, state.lastBreath - 3);
+    breathCC.textContent = state.lastBreath;
+    
+    // Note off on piano roll
+    const now = performance.now();
+    if (now - state.lastActiveTime > 300) {
+      // Silence detected
+    }
+  }
+  
+  state.rafId = requestAnimationFrame(processAudio);
+}
+
+function midiName(note) {
+  const names = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  return names[note % 12] + Math.floor(note / 12) - 1;
+}
+
+// ─── Ternary Classification ───
+function classifyTrit(velocity, f0, note) {
+  // -1 (Reject): very quiet or very low pitch → disagreement
+  if (velocity < 30 || f0 < 100) return -1;
+  // +1 (Approve): moderate-to-loud, mid-range pitch → agreement
+  if (velocity >= 40 && velocity <= 100 && f0 >= 100 && f0 <= 400) return 1;
+  // 0 (Abstain): everything else
+  return 0;
+}
+
+function updateTritDisplay(trit) {
+  document.querySelectorAll('.ternary-badge').forEach(el => el.style.opacity = '0.2');
+  if (trit === 1) $('tritPlus').style.opacity = '1';
+  else if (trit === 0) $('tritZero').style.opacity = '1';
+  else $('tritMinus').style.opacity = '1';
+}
+
+// ─── MIDI CC Values ───
+function updateCC(vel, breath, f0, note) {
+  const modWheel = Math.round(vel * 0.8);
+  const expression = Math.round(Math.min(127, Math.abs(f0 - 200) * 0.5));
+  const attention = Math.round(Math.min(127, (breath + Math.abs(note - 60)) * 0.5));
+  
+  $('cc1').textContent = modWheel;
+  $('cc2').textContent = breath;
+  $('cc11').textContent = expression;
+  $('cc16').textContent = attention;
+  
+  const avgCC = Math.round((modWheel + breath + expression + attention) / 4);
+  $('ccMeter').style.width = `${(avgCC / 127) * 100}%`;
+  
+  // MIDI-formatted output
+  const ccStr = `CC#1=${modWheel} CC#2=${breath} CC#11=${expression} CC#16=${attention}`;
+  $('ccOut').textContent = ccStr;
+}
+
+// ─── Piano Roll Visualization ───
+function addNoteToRoll(noteNum, actualNote, vel, breath, cents) {
+  const roll = $('pianoRoll');
+  const note = document.createElement('div');
+  note.className = 'piano-note';
+  
+  const y = 200 - ((noteNum - 36) / 60) * 200;
+  const height = Math.max(3, vel / 10);
+  const alpha = Math.max(0.3, vel / 127);
+  const hue = vel > 80 ? 150 : (vel > 40 ? 40 : 0);
+  
+  note.style.cssText = `
+    bottom: ${y}px;
+    left: ${(performance.now() % 3000) / 3000 * 100}%;
+    width: ${Math.max(3, breath / 10)}px;
+    height: ${height}px;
+    background: hsl(${hue}, ${60 + vel}%, ${40 + vel/4}%);
+    opacity: ${alpha};
+    transition: left 0.1s linear;
+  `;
+  
+  roll.appendChild(note);
+  
+  // Limit notes on roll
+  while (roll.children.length > 80) {
+    roll.removeChild(roll.firstChild);
+  }
+}
+
+// ─── Ghost Track Simulator ───
+function updateGhostTrack(actualNote, trit) {
+  // Ghost predicts: the next note should be actualNote + trit * 4 (the accumulator invariant!)
+  const predictedNote = state.lastNote + state.lastTrit * 4;
+  const actualDiff = actualNote - state.lastNote;
+  
+  // Conservation Ratio: how well the prediction matches
+  if (state.lastNote !== state.lastActiveNote) {
+    const expectedDiff = state.lastTrit * 4;
+    const error = Math.abs(actualDiff - expectedDiff);
+    const maxError = 24; // 2 octaves
+    state.cr = Math.max(0, Math.min(1, 1 - error / maxError));
+    crValue.textContent = state.cr.toFixed(3);
+    
+    // Surprise level = 1 - CR
+    state.surprise = 1 - state.cr;
+    surpriseLevel.textContent = `${(state.surprise * 100).toFixed(0)}%`;
+    
+    // Show ghost tracks
+    renderGhostTracks(predictedNote, actualNote);
+  }
+  state.lastActiveNote = actualNote;
+  
+  // Log event
+  logEvent(`Note ${midiName(actualNote)} (vel=${state.lastVelocity}) CR=${state.cr.toFixed(3)}`);
+}
+
+function renderGhostTracks(predicted, actual) {
+  ghostTracks.innerHTML = '';
+  ghostTracks.innerHTML += '<div style="position:absolute;bottom:2px;left:4px;font-size:0.55em;color:#444;">predicted</div>';
+  
+  const w = ghostTracks.clientWidth || 600;
+  
+  // Show predicted note
+  if (predicted > 0) {
+    const pEl = document.createElement('div');
+    pEl.className = 'ghost-note';
+    const pY = 60 - ((predicted - 36) / 60) * 60;
+    pEl.style.cssText = `bottom:${pY}px;left:10%;width:40px;background:#ff7f50;opacity:0.5;`;
+    ghostTracks.appendChild(pEl);
+    // Label
+    const pLabel = document.createElement('span');
+    pLabel.style.cssText = `position:absolute;bottom:${pY + 2}px;left:15%;font-size:0.55em;color:#ff7f5088;`;
+    pLabel.textContent = `pred ${midiName(predicted)}`;
+    ghostTracks.appendChild(pLabel);
+  }
+  
+  // Show actual note
+  if (actual > 0) {
+    const aEl = document.createElement('div');
+    const aY = 60 - ((actual - 36) / 60) * 60;
+    aEl.style.cssText = `position:absolute;bottom:${aY}px;left:55%;width:40px;height:3px;background:#4ade80;border-radius:1px;opacity:0.8;`;
+    ghostTracks.appendChild(aEl);
+    const aLabel = document.createElement('span');
+    aLabel.style.cssText = `position:absolute;bottom:${aY + 2}px;left:60%;font-size:0.55em;color:#4ade80aa;`;
+    aLabel.textContent = `actual ${midiName(actual)}`;
+    ghostTracks.appendChild(aLabel);
+  }
+  
+  // Show reharmonization alert if CR < 0.7
+  if (state.cr < 0.7 && state.cr > 0) {
+    const alert = document.createElement('div');
+    alert.className = 'reharm-alert';
+    alert.style.cssText = 'position:absolute;top:4px;right:8px;';
+    alert.textContent = `⚠️ REHARMONIZE (CR=${state.cr.toFixed(2)})`;
+    ghostTracks.appendChild(alert);
+  }
+}
+
+// ─── BPM Estimation ───
+let lastNoteTime = 0;
+function updateBPM() {
+  const now = performance.now();
+  if (state.lastVelocity > 20) {
+    const delta = now - lastNoteTime;
+    if (delta > 200 && delta < 2000 && lastNoteTime > 0) {
+      const bpm = Math.round(60000 / delta);
+      state.bpm = Math.round(state.bpm * 0.7 + bpm * 0.3);
+      bpmDisplay.textContent = Math.round(state.bpm);
+    }
+    lastNoteTime = now;
+  }
+}
+
+// ─── MIDI Event Log ───
+let logCount = 0;
+function logEvent(msg) {
+  const level = $('logLevel').value;
+  if (level === 'off') return;
+  if (level === 'cc' && msg.startsWith('Note')) return;
+  if (level === 'note' && msg.startsWith('CC')) return;
+  
+  logCount++;
+  midiLog.innerHTML = `[${new Date().toISOString().substr(11,8)}] ${msg}<br>` + midiLog.innerHTML;
+  
+  // Trim
+  while (midiLog.children.length > 40) {
+    midiLog.removeChild(midiLog.lastChild);
+  }
+}
+
+// ─── Start / Stop ───
+btnStart.onclick = async () => {
+  try {
+    state.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    state.audioCtx = new AudioContext();
+    state.analyser = state.audioCtx.createAnalyser();
+    state.analyser.fftSize = 2048;
+    state.source = state.audioCtx.createMediaStreamSource(state.stream);
+    state.source.connect(state.analyser);
+    
+    state.recording = true;
+    btnStart.disabled = true;
+    btnStop.disabled = false;
+    statusEl.textContent = '🔴 RECORDING';
+    statusEl.className = 'status recording';
+    
+    logEvent('🎤 Microphone started');
+    processAudio();
+  } catch (e) {
+    logEvent(`❌ Error: ${e.message}`);
+    alert('Mic access denied: ' + e.message);
+  }
+};
+
+btnStop.onclick = () => {
+  state.recording = false;
+  if (state.rafId) cancelAnimationFrame(state.rafId);
+  if (state.stream) state.stream.getTracks().forEach(t => t.stop());
+  if (state.audioCtx) state.audioCtx.close();
+  
+  btnStart.disabled = false;
+  btnStop.disabled = true;
+  statusEl.textContent = '⚪ Offline';
+  statusEl.className = 'status';
+  
+  logEvent('■ Recording stopped');
+};
+
+// ─── Init ───
+btnStart.disabled = false;
+logEvent('🎤 Prosody Bridge ready. Click Start to begin.');
+logEvent(`🧮 Trit: +1=Agree 0=Abstain -1=Reject`);
+logEvent(`🎵 CR=Conservation Ratio (ghost prediction accuracy)`);
+logEvent(`⚡ 200ms reharmonization: CR<0.7 triggers pivot`);
+
+// ─── Config watchers ───
+$('sensitivity').oninput = function() {
+  logEvent(`Sensitivity: ${this.value}x`);
+};
+</script>
+
+</body>
+</html>
