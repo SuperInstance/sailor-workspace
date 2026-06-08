@@ -1,0 +1,128 @@
+[
+  {
+    "time": 0.0,
+    "speaker": "Alice",
+    "word": "to",
+    "note": "C4",
+    "pitch": "-",
+    "vol": "m",
+    "timing": "on"
+  },
+  {
+    "time": 0.3,
+    "speaker": "Alice",
+    "word": "understand",
+    "note": "G4",
+    "pitch": "^",
+    "vol": "L",
+    "timing": "on"
+  },
+  {
+    "time": 0.6,
+    "speaker": "Alice",
+    "word": "extra",
+    "note": "G4",
+    "pitch": "^",
+    "vol": "L",
+    "timing": "on"
+  },
+  {
+    "time": 0.9,
+    "speaker": "Alice",
+    "word": "that",
+    "note": "G4",
+    "pitch": "^",
+    "vol": "L",
+    "timing": "on"
+  },
+  {
+    "time": 1.2,
+    "speaker": "Alice",
+    "word": "back",
+    "note": "G4",
+    "pitch": "^",
+    "vol": "L",
+    "timing": "ahead"
+  },
+  {
+    "time": 1.6,
+    "speaker": "Bob",
+    "word": "the",
+    "note": "G3",
+    "pitch": "^",
+    "vol": "m",
+    "timing": "on"
+  },
+  {
+    "time": 1.9,
+    "speaker": "Bob",
+    "word": "compose",
+    "note": "C3",
+    "pitch": "-",
+    "vol": "m",
+    "timing": "on"
+  },
+  {
+    "time": 2.2,
+    "speaker": "Bob",
+    "word": "a",
+    "note": "C3",
+    "pitch": "-",
+    "vol": "s",
+    "timing": "on"
+  },
+  {
+    "time": 2.5,
+    "speaker": "Bob",
+    "word": "it",
+    "note": "F2",
+    "pitch": "v",
+    "vol": "s",
+    "timing": "behind"
+  },
+  {
+    "time": 2.7,
+    "speaker": "Bob",
+    "word": "not",
+    "note": "G3",
+    "pitch": "^",
+    "vol": "m",
+    "timing": "on"
+  },
+  {
+    "time": 3.0,
+    "speaker": "Bob",
+    "word": "of",
+    "note": "C3",
+    "pitch": "-",
+    "vol": "m",
+    "timing": "on"
+  },
+  {
+    "time": 3.3,
+    "speaker": "Bob",
+    "word": "as",
+    "note": "C3",
+    "pitch": "-",
+    "vol": "m",
+    "timing": "on"
+  },
+  {
+    "time": 3.6,
+    "speaker": "Bob",
+    "word": "patterns",
+    "note": "C3",
+    "pitch": "-",
+    "vol": "m",
+    "timing": "on"
+  },
+  {
+    "time": 3.9,
+    "speaker": "Bob",
+    "word": "a",
+    "note": "C3",
+    "pitch": "-",
+    "vol": "m",
+    "timing": "on"
+  }
+]

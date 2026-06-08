@@ -1,49 +1,32 @@
-
-CONVERSATION SHAPE — Lead-Sheet View
-==============================================================================
-Duration: 25.1s  |  Words: 84  |  Alice: 35  |  Bob: 49
-==============================================================================
-          |0s  5s  9s  14s  18s  23s  
-Alice pitch |--v-^^^^         --^^^^        -^^^      -^^^^    
-Bob pitch   |       ----v----vv    --v--vv-v    --vv-vv   ----v
-
-Alice energy|▓▓▒▒▓███         ▒▓████        ▓███      ▒▓███    
-Bob energy  |       ▓▒▒▒░▓▒▒▒▒░    ▓▓▒▓▒▒░▒░    ▓▒▒░▓▒░   ▓▓▒▒░
-
-Alice role  |-------?         -----?        ---?      ----?    
-Bob role    |       ----.-----.    ------.-.    ---.--.   ----.
-
-TRANSCRIPT (time-aligned)
+CONVERSATION SHAPE  |  86 events, 31.9s
 ------------------------------------------------------------------------------
-  [  0.0s] alice  Welcome                   pitch=- vol=m role=. note=F#4 vel=90
-  [  0.3s] alice  to                        pitch=- vol=m role=. note=F4 vel=84
-  [  0.6s] alice  the                       pitch=- vol=m role=. note=F4 vel=78
-  [  0.9s] alice  future                    pitch=- vol=m role=. note=E4 vel=72
-  [  1.2s] alice  of                        pitch=v vol=m role=. note=D#4 vel=66
-  [  1.5s] alice  conversation              pitch=v vol=m role=A note=D4 vel=60
-  [  1.8s] alice  Can                       pitch=- vol=m role=. note=F4 vel=70
-  [  2.1s] alice  machines                  pitch=- vol=m role=. note=F#4 vel=78
-  [  2.4s] alice  really                    pitch=^ vol=m role=. note=G4 vel=86
-  [  2.7s] alice  understand                pitch=^ vol=L role=. note=G#4 vel=95
-  [  3.0s] alice  how                       pitch=^ vol=L role=. note=A4 vel=103
-  [  3.3s] alice  we                        pitch=^ vol=L role=. note=A#4 vel=111
-  [  3.6s] alice  speak                     pitch=^ vol=L role=Q note=B4 vel=120
-  [  3.9s] bob    They                      pitch=- vol=m role=. note=F3 vel=80
-  [  4.2s] bob    can                       pitch=- vol=m role=. note=E3 vel=75
-  [  4.5s] bob    analyze                   pitch=- vol=m role=. note=E3 vel=70
-  [  4.8s] bob    patterns                  pitch=- vol=m role=. note=D#3 vel=65
-  [  5.1s] bob    in                        pitch=- vol=m role=. note=D#3 vel=60
-  [  5.4s] bob    our                       pitch=v vol=s role=. note=D3 vel=55
-  [  5.7s] bob    voice                     pitch=v vol=s role=A note=C#3 vel=50
-  [  6.0s] bob    Not                       pitch=- vol=m role=. note=F3 vel=80
-  [  6.3s] bob    just                      pitch=- vol=m role=. note=E3 vel=76
-  [  6.6s] bob    what                      pitch=- vol=m role=. note=E3 vel=73
-  [  6.9s] bob    we                        pitch=- vol=m role=. note=E3 vel=70
-  [  7.2s] bob    say                       pitch=- vol=m role=. note=E3 vel=66
-  [  7.5s] bob    but                       pitch=- vol=m role=. note=D#3 vel=63
-  [  7.8s] bob    how                       pitch=- vol=m role=. note=D#3 vel=60
-  [  8.1s] bob    we                        pitch=v vol=s role=. note=D3 vel=56
-  [  8.4s] bob    say                       pitch=v vol=s role=. note=D3 vel=53
-  [  8.7s] bob    it                        pitch=v vol=s role=A note=C#3 vel=50
+          |0s  5s  10s  16s  21s  26s  31s  
+Alice pitch |--v  --^^^               -^^^^                    -^^^             -^^         
+Bob pitch   |           ----v  -----v       --- v  ---v  ^-v        ^--v  ---v     ^ ---- -v
+Alice energy|▓▒░  ▓▓███               ▓████                    ▓███             ▓██         
+Bob energy  |           ▓▓▒▒░  ▓▓▒▒░░       ▓▒▒ ░  ▓▒▒░  ▓▒░        ▓▒▒░  ▓▒▒░     ▓ ▓▓▒▒ ▒░
+Alice role  |--.  ----?               ----?                    ---?             --?         
+Bob role    |           ----.  -----.       --- .  ---.  --.        ---.  ---.     - ---- -.
 
-LEGEND: pitch: ^ rising  - flat  v falling  | vol: L loud m med s soft  | role: Q quest . cont A answer
+TRANSCRIPT (first 20)
+------------------------------------------------------------
+  [ 0.00s] A welcome              pitch=^ vol=m role=. note= D#4 vel=85
+  [ 0.32s] A to                   pitch=- vol=m role=. note=  D4 vel=77
+  [ 0.60s] A the                  pitch=- vol=m role=. note= C#4 vel=69
+  [ 0.68s] A future               pitch=- vol=m role=. note=  C4 vel=61
+  [ 0.94s] A of                   pitch=- vol=s role=. note=  B3 vel=53
+  [ 1.14s] A conversation         pitch=v vol=s role=A note= A#3 vel=45
+  [ 2.18s] A can                  pitch=- vol=m role=. note=  C4 vel=70
+  [ 2.22s] A machines             pitch=- vol=m role=. note= C#4 vel=78
+  [ 2.60s] A really               pitch=- vol=m role=. note=  D4 vel=86
+  [ 3.02s] A understand           pitch=^ vol=L role=. note= D#4 vel=95
+  [ 3.42s] A how                  pitch=^ vol=L role=. note=  E4 vel=103
+  [ 3.60s] A we                   pitch=^ vol=L role=. note=  F4 vel=111
+  [ 3.80s] A speak                pitch=^ vol=L role=Q note=  G4 vel=120
+  [ 4.58s] B they                 pitch=^ vol=m role=. note= D#3 vel=85
+  [ 4.68s] B can                  pitch=- vol=m role=. note=  D3 vel=78
+  [ 4.86s] B analyze              pitch=- vol=m role=. note= C#3 vel=71
+  [ 5.32s] B patterns             pitch=- vol=m role=. note=  C3 vel=65
+  [ 5.76s] B in                   pitch=- vol=s role=. note=  C3 vel=58
+  [ 6.08s] B our                  pitch=- vol=s role=. note=  B2 vel=51
+  [ 6.20s] B voice                pitch=v vol=s role=A note= A#2 vel=45
