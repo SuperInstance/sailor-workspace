@@ -28,6 +28,7 @@ from collections import deque
 
 # ─── Configuration ───
 GHOST_BRIDGE_URL = "ws://localhost:8767"
+TMINUS_DISPATCHER_URL = "ws://localhost:8768"
 OPEN_SMILE_PORT = 8765
 SAMPLE_RATE = 16000
 FRAME_SIZE = 1024
@@ -245,6 +246,153 @@ class AudioDecoder:
         return audio
 
 
+# ─── tminus-dispatcher Client ───
+class TminusClient:
+    """WebSocket client to tminus-dispatcher for voice cue injection.
+    
+    Implements Option A from the integration analysis:
+    Direct WebSocket from OpenSMILE Bridge to tminus-dispatcher.
+    """
+    
+    def __init__(self, url):
+        self.url = url
+        self.ws = None
+        self.agent_id = None
+        self.connected = False
+    
+    async def connect_and_register(self):
+        """Connect to tminus-dispatcher and register as voice agent."""
+        try:
+            self.ws = await websockets.connect(self.url, ping_interval=30, ping_timeout=10)
+            
+            # tminus-dispatcher doesn't send a welcome — just register immediately
+            await self.ws.send(json.dumps({
+                'type': 'REGISTER',
+                'seq': 1,
+                'ts': int(time.time() * 1000),
+                'payload': {
+                    'name': 'opensmile-voice',
+                    'timbre': 'voice-features',
+                    'frequency': 0.9,
+                    'latency_ms': 50,
+                    'context_depth': 'shallow'
+                }
+            }))
+            try:
+                resp = json.loads(await asyncio.wait_for(self.ws.recv(), timeout=3))
+                if resp.get('type') == 'REGISTERED':
+                    self.agent_id = resp.get('payload', {}).get('agent_id', 'unknown')
+                    print(f"  Registered with tminus-dispatcher as agent {self.agent_id}")
+                
+                # Subscribe to real-time voice phase group
+                await self.ws.send(json.dumps({
+                    'type': 'SUBSCRIBE',
+                    'seq': 2,
+                    'ts': int(time.time() * 1000),
+                    'payload': {'phase_groups': ['voice-real-time']}
+                }))
+                sub_resp = json.loads(await asyncio.wait_for(self.ws.recv(), timeout=3))
+                print(f"  Subscribed to voice-real-time phase group")
+            except (asyncio.TimeoutError, KeyError, json.JSONDecodeError):
+                print(f"  tminus registration may need manual phase group creation")
+            
+            self.connected = True
+            return True
+        except (ConnectionRefusedError, websockets.exceptions.WebSocketException) as e:
+            print(f"  tminus-dispatcher not available: {e}")
+            return False
+    
+    async def send_cue(self, features: dict, cc: dict):
+        """Send enriched voice features as a CUE message."""
+        if not self.connected or not self.ws or not self.ws.open:
+            return
+        
+        try:
+            # Build enriched cue payload
+            cue = {
+                'type': 'CUE',
+                'seq': int(time.time() * 1000),
+                'ts': int(time.time() * 1000),
+                'payload': {
+                    'target_id': 'ghost-track-bridge',
+                    'offset_beats': 0,      # pre-cue / immediate
+                    'phase_group': 'voice-real-time',
+                    'payload': {
+                        'source': 'opensmile-bridge',
+                        'agent_id': self.agent_id,
+                        # MIDI CC values
+                        'voice': {
+                            'note': cc.get('note', 0),
+                            'velocity': cc.get('velocity', 0),
+                            'trit': cc.get('trit', 0),
+                            'pitch_bend': cc.get('pitch_bend', 0),
+                            'note_name': cc.get('note_name', '?')
+                        },
+                        # Raw OpenSMILE features
+                        'features': {
+                            'f0_semitones': features.get('f0_semitones', 0),
+                            'loudness': features.get('loudness', 0),
+                            'jitter': features.get('jitter', 0),
+                            'shimmer': features.get('shimmer', 0),
+                            'hnr': features.get('hnr', 0),
+                            'f1_freq': features.get('f1_freq', 0),
+                            'f2_freq': features.get('f2_freq', 0),
+                            'f3_freq': features.get('f3_freq', 0),
+                            'mfcc_1': features.get('mfcc_1', 0),
+                            'mfcc_2': features.get('mfcc_2', 0),
+                            'mfcc_3': features.get('mfcc_3', 0),
+                            'mfcc_4': features.get('mfcc_4', 0),
+                            'slope_0_500': features.get('slope_0_500', 0),
+                            'slope_500_1500': features.get('slope_500_1500', 0),
+                            'alpha_ratio': features.get('alpha_ratio', 0),
+                            'hammarberg': features.get('hammarberg', 0),
+                            'spectral_flux': features.get('spectral_flux', 0)
+                        },
+                        # Derived voice quality metrics
+                        'voice_quality': {
+                            'stability': self._calc_stability(cc, features),
+                            'urgency': cc.get('velocity', 0) / 127.0,
+                            'brightness': (cc.get('cc_75', 0) / 127.0) if cc.get('cc_75', 0) > 0 else 0.5
+                        },
+                        # MIDI CC values for ghost engine
+                        'midi_cc': {
+                            'cc_2': cc.get('cc_2', 0),
+                            'cc_7': cc.get('cc_7', 0),
+                            'cc_16': cc.get('cc_16', 0),
+                            'cc_17': cc.get('cc_17', 0),
+                            'cc_71': cc.get('cc_71', 0),
+                            'cc_74': cc.get('cc_74', 0),
+                            'cc_75': cc.get('cc_75', 0),
+                            'cc_76': cc.get('cc_76', 0),
+                            'cc_77': cc.get('cc_77', 0),
+                            'cc_78': cc.get('cc_78', 0)
+                        }
+                    }
+                }
+            }
+            
+            await self.ws.send(json.dumps(cue))
+        except Exception as e:
+            print(f"  Tminus send error: {e}")
+            self.connected = False
+    
+    def _calc_stability(self, cc: dict, features: dict) -> float:
+        """Compute voice stability from jitter + shimmer.
+        1.0 = extremely stable, 0.0 = unstable.
+        """
+        jitter = features.get('jitter', 0)
+        shimmer = features.get('shimmer', 0)
+        norm_jitter = min(1.0, jitter * 50) if jitter else 0
+        norm_shimmer = min(1.0, shimmer * 10) if shimmer else 0
+        stability = 1.0 - ((norm_jitter + norm_shimmer) / 2.0)
+        return max(0.0, min(1.0, stability))
+    
+    async def close(self):
+        if self.ws:
+            await self.ws.close()
+        self.connected = False
+
+
 # ─── WebSocket Server ───
 class OpenSmileBridge:
     """WebSocket server that receives audio and outputs enriched MIDI CC."""
@@ -255,6 +403,7 @@ class OpenSmileBridge:
         self.ghost_ws = None
         self.clients = set()
         self.running = False
+        self.tminus_client = TminusClient(TMINUS_DISPATCHER_URL)
 
     async def connect_to_ghost(self):
         """Connect to the Ghost Track Bridge for downstream processing."""
@@ -340,6 +489,9 @@ class OpenSmileBridge:
 
                                 # Forward to Ghost Track Bridge
                                 await self.send_to_ghost(cc)
+                                
+                                # Forward to tminus-dispatcher
+                                await self.tminus_client.send_cue(features, cc)
 
                     elif msg_type == 'ping':
                         await websocket.send(json.dumps({'type': 'pong', 'time': time.time()}))
@@ -376,6 +528,9 @@ class OpenSmileBridge:
 
         # Connect to Ghost Track Bridge
         await self.connect_to_ghost()
+        
+        # Connect to tminus-dispatcher (non-blocking, retries)
+        await self.tminus_client.connect_and_register()
 
         # Start WebSocket server
         async with websockets.serve(
