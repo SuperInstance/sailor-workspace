@@ -1,0 +1,220 @@
+{
+  "source": "ABC Conversations Podcast (host: Sarah Kanowski, F)",
+  "host_f0_estimated_hz": 180,
+  "host_speaking_style": "Warm, structured, probing interviewer",
+  "guests": {
+    "ep10-community": {
+      "name": "Jo Jarvis (prison meditation)",
+      "gender": "F",
+      "desc": "Meditation teacher at Rikers Island",
+      "acoustic": {
+        "f0_mean_hz": 194.1,
+        "f0_std_hz": 61.8,
+        "f0_min_hz": 55.0,
+        "f0_max_hz": 996.5,
+        "voiced_pct": 58,
+        "loudness_mean": 0.9315,
+        "loudness_std": 0.6274,
+        "hnr_mean": 4.36,
+        "hnr_std": 4.62,
+        "jitter_mean": 0.008728,
+        "alpha_ratio": -8.067,
+        "spectral_flux": 0.4414,
+        "frames": 59920,
+        "duration_s": 600.0
+      },
+      "vocal_personality": {
+        "pitch_type": "High",
+        "breathiness": "Neutral",
+        "energy": "High",
+        "stability": "Variable",
+        "vocal_health_score": 90.3,
+        "traits": [
+          "Confident/open",
+          "Outgoing/expressive",
+          "Animated storyteller",
+          "Bright/forward placement",
+          "Measured/deliberate"
+        ]
+      }
+    },
+    "ep3-cultural": {
+      "name": "Spanish immigrant woman",
+      "gender": "F",
+      "desc": "Moved to Australia for love",
+      "acoustic": {
+        "f0_mean_hz": 164.6,
+        "f0_std_hz": 63.0,
+        "f0_min_hz": 55.7,
+        "f0_max_hz": 999.2,
+        "voiced_pct": 57,
+        "loudness_mean": 0.9147,
+        "loudness_std": 0.5883,
+        "hnr_mean": 3.82,
+        "hnr_std": 4.21,
+        "jitter_mean": 0.00994,
+        "alpha_ratio": -10.102,
+        "spectral_flux": 0.481,
+        "frames": 59920,
+        "duration_s": 600.0
+      },
+      "vocal_personality": {
+        "pitch_type": "Medium",
+        "breathiness": "Neutral",
+        "energy": "High",
+        "stability": "Variable",
+        "vocal_health_score": 86.3,
+        "traits": [
+          "Outgoing/expressive",
+          "Animated storyteller",
+          "Warm/dark timbre",
+          "Measured/deliberate"
+        ]
+      }
+    },
+    "ep6-journalist": {
+      "name": "Noni Hazlehurst (actress)",
+      "gender": "F",
+      "desc": "Australian TV icon, Play School",
+      "acoustic": {
+        "f0_mean_hz": 139.1,
+        "f0_std_hz": 73.4,
+        "f0_min_hz": 55.5,
+        "f0_max_hz": 995.3,
+        "voiced_pct": 48,
+        "loudness_mean": 0.8624,
+        "loudness_std": 0.5737,
+        "hnr_mean": 2.41,
+        "hnr_std": 3.32,
+        "jitter_mean": 0.008594,
+        "alpha_ratio": -8.608,
+        "spectral_flux": 0.4468,
+        "frames": 59920,
+        "duration_s": 600.0
+      },
+      "vocal_personality": {
+        "pitch_type": "Medium",
+        "breathiness": "Breathy",
+        "energy": "Medium",
+        "stability": "Variable",
+        "vocal_health_score": 81.6,
+        "traits": [
+          "Tentative/reflective",
+          "Reserved/pensive",
+          "Bright/forward placement",
+          "Measured/deliberate"
+        ]
+      }
+    },
+    "ep8-author": {
+      "name": "Teen father/skateboarder",
+      "gender": "M",
+      "desc": "Used skate park to transform community",
+      "acoustic": {
+        "f0_mean_hz": 151.7,
+        "f0_std_hz": 87.9,
+        "f0_min_hz": 55.2,
+        "f0_max_hz": 997.6,
+        "voiced_pct": 42,
+        "loudness_mean": 0.8375,
+        "loudness_std": 0.5852,
+        "hnr_mean": 2.45,
+        "hnr_std": 3.69,
+        "jitter_mean": 0.008468,
+        "alpha_ratio": -9.327,
+        "spectral_flux": 0.4951,
+        "frames": 59920,
+        "duration_s": 600.0
+      },
+      "vocal_personality": {
+        "pitch_type": "Medium",
+        "breathiness": "Breathy",
+        "energy": "Medium",
+        "stability": "Variable",
+        "vocal_health_score": 79.0,
+        "traits": [
+          "Tentative/reflective",
+          "Reserved/pensive",
+          "Bright/forward placement",
+          "Measured/deliberate"
+        ]
+      }
+    },
+    "luke-bateman": {
+      "name": "Luke Bateman",
+      "gender": "M",
+      "desc": "Former NRL player, gambling addiction survivor",
+      "acoustic": {
+        "f0_mean_hz": 110.8,
+        "f0_std_hz": 84.7,
+        "voiced_pct": 43,
+        "hnr_mean": 1.6,
+        "jitter_mean": 0.00755,
+        "loudness_mean": 0.7969,
+        "loudness_std": 0.5,
+        "alpha_ratio": -11.224,
+        "spectral_flux": 0.4749,
+        "frames": 59920,
+        "duration_s": 600
+      },
+      "vocal_personality": {
+        "pitch_type": "Low",
+        "breathiness": "Breathy",
+        "energy": "Medium",
+        "stability": "Variable",
+        "vocal_health_score": 54.3,
+        "traits": [
+          "Reserved/pensive",
+          "Emotionally responsive",
+          "Warm/dark timbre",
+          "Measured/deliberate",
+          "Tentative/reflective"
+        ]
+      }
+    },
+    "teen_father_skateboarder": {
+      "name": "Teen Father Skateboarder",
+      "gender": "M",
+      "desc": "ABC Conversations guest, used skate park to change community",
+      "acoustic": {
+        "f0_mean_hz": 151.7,
+        "f0_std_hz": 87.9,
+        "f0_min_hz": 55.2,
+        "f0_max_hz": 997.6,
+        "voiced_pct": 42,
+        "hnr_mean": 2.45,
+        "hnr_std": 3.69,
+        "jitter_mean": 0.008468,
+        "loudness_mean": 0.8375,
+        "spectral_flux": 0.4951,
+        "alpha_ratio": -9.327
+      },
+      "conversation": {
+        "word_count": 1779,
+        "segments": 177,
+        "wpm": 178.0,
+        "duration_s": 599.5,
+        "gap_mean": 0.739,
+        "gap_max": 2.08,
+        "seg_len_mean": 3.39
+      },
+      "vocal_personality": {
+        "pitch_type": "Medium",
+        "breathiness": "Breathy",
+        "energy": "Medium",
+        "stability": "Variable",
+        "rate_type": "Fast",
+        "vocal_health": 83.9,
+        "traits": [
+          "Tentative/reflective",
+          "Reserved/pensive",
+          "Bright/forward placement",
+          "Measured/deliberate",
+          "Rapid/fast talker"
+        ]
+      },
+      "profile_path": "/home/ubuntu/.openclaw/workspace/speaker_profiler/profiles/041188d3de44-profile.json",
+      "profiled_at": "2026-06-09T03:57:41Z"
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "fingerprint": "041188d3de44",
+  "name": "Teen Father Skateboarder",
+  "gender": "M",
+  "desc": "ABC Conversations guest, used skate park to change community",
+  "acoustic": {
+    "F0semitoneFrom27.5Hz_sma3nz": {
+      "mean": 11.811172753612253,
+      "std": 14.456442906034441,
+      "p5": 0.0,
+      "p95": 34.456634521484375
+    },
+    "Loudness_sma3": {
+      "mean": 0.8375363759168885,
+      "std": 0.5851986796439445,
+      "p5": 0.049945288337767124,
+      "p95": 1.9075525164604186
+    },
+    "HNRdBACF_sma3nz": {
+      "mean": 2.4536166238776373,
+      "std": 3.6886119508065223,
+      "p5": 0.0,
+      "p95": 10.104368734359738
+    },
+    "jitterLocal_sma3nz": {
+      "mean": 0.008468478555867657,
+      "std": 0.03191821936084506,
+      "p5": 0.0,
+      "p95": 0.03864171933382741
+    },
+    "shimmerLocaldB_sma3nz": {
+      "mean": 0.41529675091680573,
+      "std": 0.8129014186371051,
+      "p5": 0.0,
+      "p95": 2.120922374725341
+    },
+    "alphaRatio_sma3": {
+      "mean": -9.326949745426452,
+      "std": 11.619239814780395,
+      "p5": -27.45419397354126,
+      "p95": 11.50677795410156
+    },
+    "spectralFlux_sma3": {
+      "mean": 0.4951346625231646,
+      "std": 0.42868448737439135,
+      "p5": 0.005244862893596292,
+      "p95": 1.3285910010337827
+    },
+    "F1frequency_sma3nz": {
+      "mean": 655.2343182273478,
+      "std": 238.99129465062526,
+      "p5": 351.4693115234375,
+      "p95": 1081.4956970214844
+    },
+    "F2frequency_sma3nz": {
+      "mean": 1664.9276126683314,
+      "std": 265.91601279487236,
+      "p5": 1288.476171875,
+      "p95": 2131.0138305664063
+    },
+    "_overall": {
+      "frames": 59920,
+      "duration_s": 600.0,
+      "voiced_pct": 42,
+      "f0_mean_hz": 151.7,
+      "f0_std_hz": 87.9,
+      "f0_min_hz": 55.2,
+      "f0_max_hz": 997.6,
+      "loudness_mean": 0.8375
+    }
+  },
+  "conversation": {
+    "word_count": 1779,
+    "segments": 177,
+    "wpm": 178.0,
+    "duration_s": 599.5,
+    "gap_mean": 0.739,
+    "gap_max": 2.08,
+    "seg_len_mean": 3.39
+  },
+  "vocal_personality": {
+    "pitch_type": "Medium",
+    "breathiness": "Breathy",
+    "energy": "Medium",
+    "stability": "Variable",
+    "rate_type": "Fast",
+    "vocal_health": 83.9,
+    "traits": [
+      "Tentative/reflective",
+      "Reserved/pensive",
+      "Bright/forward placement",
+      "Measured/deliberate",
+      "Rapid/fast talker"
+    ]
+  },
+  "processing_time_s": 62.5,
+  "timestamp": "2026-06-09T03:57:41Z"
+}
