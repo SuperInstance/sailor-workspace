@@ -1,0 +1,307 @@
+<?xml version="1.0" ?>
+<Session version="7000" name="conversation-lead-sheet" sample-rate="48000">
+  <Source name="pitch-alice.mid" type="midi" path="midi/pitch-alice.mid" id="1"/>
+  <Source name="pitch-bob.mid" type="midi" path="midi/pitch-bob.mid" id="2"/>
+  <Region name="alice-prosody" source-id="1" start="0" length="1540800" position="0" layer="0"/>
+  <Region name="bob-prosody" source-id="2" start="0" length="1540800" position="0" layer="0"/>
+  <Route name="Alice (Host) Pitch" default-type="midi" id="route-3">
+    <IO name="Alice (Host) Pitch">
+      <Input type="midi">
+        <Port name="Alice (Host) Pitch/midi_in" type="midi"/>
+      </Input>
+      <Output type="midi">
+        <Port name="Alice (Host) Pitch/midi_out" type="midi"/>
+      </Output>
+    </IO>
+    <Playlist type="midi" name="Alice (Host) Pitch">
+      <RegionReference region-name="alice-prosody" position="0"/>
+    </Playlist>
+    <AutomationList parameter="cc74" interpolation="linear">
+      <Point time="0" value="1.000000"/>
+      <Point time="15360" value="0.503937"/>
+      <Point time="28800" value="0.503937"/>
+      <Point time="32640" value="0.503937"/>
+      <Point time="45120" value="0.503937"/>
+      <Point time="54719" value="0.000000"/>
+      <Point time="104640" value="0.503937"/>
+      <Point time="106560" value="0.503937"/>
+      <Point time="124800" value="0.503937"/>
+      <Point time="144960" value="1.000000"/>
+      <Point time="164160" value="1.000000"/>
+      <Point time="172800" value="1.000000"/>
+      <Point time="182400" value="1.000000"/>
+      <Point time="485759" value="0.503937"/>
+      <Point time="492480" value="0.503937"/>
+      <Point time="498240" value="0.503937"/>
+      <Point time="504960" value="0.503937"/>
+      <Point time="513599" value="1.000000"/>
+      <Point time="524160" value="1.000000"/>
+      <Point time="543360" value="1.000000"/>
+      <Point time="561600" value="1.000000"/>
+      <Point time="574080" value="1.000000"/>
+      <Point time="979199" value="0.503937"/>
+      <Point time="983040" value="0.503937"/>
+      <Point time="990720" value="0.503937"/>
+      <Point time="997440" value="1.000000"/>
+      <Point time="1009920" value="1.000000"/>
+      <Point time="1025280" value="1.000000"/>
+      <Point time="1033920" value="1.000000"/>
+      <Point time="1301760" value="0.503937"/>
+      <Point time="1307520" value="0.503937"/>
+      <Point time="1310400" value="0.503937"/>
+      <Point time="1318080" value="1.000000"/>
+      <Point time="1328640" value="1.000000"/>
+      <Point time="1338240" value="1.000000"/>
+      <Point time="1350720" value="1.000000"/>
+    </AutomationList>
+    <AutomationList parameter="cc11" interpolation="linear">
+      <Point time="0" value="0.669291"/>
+      <Point time="15360" value="0.606299"/>
+      <Point time="28800" value="0.543307"/>
+      <Point time="32640" value="0.480315"/>
+      <Point time="45120" value="0.417323"/>
+      <Point time="54719" value="0.354331"/>
+      <Point time="104640" value="0.551181"/>
+      <Point time="106560" value="0.614173"/>
+      <Point time="124800" value="0.677165"/>
+      <Point time="144960" value="0.748031"/>
+      <Point time="164160" value="0.811024"/>
+      <Point time="172800" value="0.874016"/>
+      <Point time="182400" value="0.944882"/>
+      <Point time="485759" value="0.551181"/>
+      <Point time="492480" value="0.598425"/>
+      <Point time="498240" value="0.645669"/>
+      <Point time="504960" value="0.692913"/>
+      <Point time="513599" value="0.748031"/>
+      <Point time="524160" value="0.795276"/>
+      <Point time="543360" value="0.842520"/>
+      <Point time="561600" value="0.889764"/>
+      <Point time="574080" value="0.944882"/>
+      <Point time="979199" value="0.551181"/>
+      <Point time="983040" value="0.614173"/>
+      <Point time="990720" value="0.677165"/>
+      <Point time="997440" value="0.748031"/>
+      <Point time="1009920" value="0.811024"/>
+      <Point time="1025280" value="0.874016"/>
+      <Point time="1033920" value="0.944882"/>
+      <Point time="1301760" value="0.551181"/>
+      <Point time="1307520" value="0.614173"/>
+      <Point time="1310400" value="0.677165"/>
+      <Point time="1318080" value="0.748031"/>
+      <Point time="1328640" value="0.811024"/>
+      <Point time="1338240" value="0.874016"/>
+      <Point time="1350720" value="0.944882"/>
+    </AutomationList>
+    <Processor name="MIDI Track">
+      <Redirect placement="pre-fader"/>
+    </Processor>
+  </Route>
+  <Route name="Bob (Guest) Pitch" default-type="midi" id="route-4">
+    <IO name="Bob (Guest) Pitch">
+      <Input type="midi">
+        <Port name="Bob (Guest) Pitch/midi_in" type="midi"/>
+      </Input>
+      <Output type="midi">
+        <Port name="Bob (Guest) Pitch/midi_out" type="midi"/>
+      </Output>
+    </IO>
+    <Playlist type="midi" name="Bob (Guest) Pitch">
+      <RegionReference region-name="bob-prosody" position="0"/>
+    </Playlist>
+    <AutomationList parameter="cc74" interpolation="linear">
+      <Point time="219840" value="1.000000"/>
+      <Point time="224640" value="0.503937"/>
+      <Point time="233280" value="0.503937"/>
+      <Point time="255360" value="0.503937"/>
+      <Point time="276480" value="0.503937"/>
+      <Point time="291840" value="0.503937"/>
+      <Point time="297600" value="0.000000"/>
+      <Point time="354240" value="1.000000"/>
+      <Point time="366720" value="0.503937"/>
+      <Point time="382080" value="0.503937"/>
+      <Point time="391680" value="0.503937"/>
+      <Point time="403200" value="0.503937"/>
+      <Point time="415680" value="0.503937"/>
+      <Point time="422400" value="0.503937"/>
+      <Point time="433919" value="0.503937"/>
+      <Point time="441599" value="0.503937"/>
+      <Point time="453120" value="0.000000"/>
+      <Point time="613440" value="1.000000"/>
+      <Point time="619200" value="0.503937"/>
+      <Point time="637440" value="0.503937"/>
+      <Point time="657600" value="0.503937"/>
+      <Point time="679680" value="0.000000"/>
+      <Point time="744960" value="1.000000"/>
+      <Point time="747840" value="0.503937"/>
+      <Point time="769920" value="0.503937"/>
+      <Point time="792000" value="0.503937"/>
+      <Point time="806400" value="0.000000"/>
+      <Point time="860160" value="1.000000"/>
+      <Point time="874560" value="0.503937"/>
+      <Point time="888000" value="0.503937"/>
+      <Point time="910080" value="0.000000"/>
+      <Point time="1074240" value="1.000000"/>
+      <Point time="1085760" value="0.503937"/>
+      <Point time="1095360" value="0.503937"/>
+      <Point time="1102080" value="0.503937"/>
+      <Point time="1111680" value="0.503937"/>
+      <Point time="1132800" value="0.000000"/>
+      <Point time="1183680" value="1.000000"/>
+      <Point time="1197120" value="0.503937"/>
+      <Point time="1214400" value="0.503937"/>
+      <Point time="1230720" value="0.503937"/>
+      <Point time="1244160" value="0.503937"/>
+      <Point time="1259520" value="0.000000"/>
+      <Point time="1371840" value="1.000000"/>
+      <Point time="1396800" value="0.503937"/>
+      <Point time="1416000" value="0.503937"/>
+      <Point time="1439040" value="0.503937"/>
+      <Point time="1461120" value="0.503937"/>
+      <Point time="1494720" value="0.503937"/>
+      <Point time="1516800" value="0.000000"/>
+    </AutomationList>
+    <AutomationList parameter="cc11" interpolation="linear">
+      <Point time="219840" value="0.669291"/>
+      <Point time="224640" value="0.614173"/>
+      <Point time="233280" value="0.559055"/>
+      <Point time="255360" value="0.511811"/>
+      <Point time="276480" value="0.456693"/>
+      <Point time="291840" value="0.401575"/>
+      <Point time="297600" value="0.354331"/>
+      <Point time="354240" value="0.669291"/>
+      <Point time="366720" value="0.629921"/>
+      <Point time="382080" value="0.598425"/>
+      <Point time="391680" value="0.559055"/>
+      <Point time="403200" value="0.527559"/>
+      <Point time="415680" value="0.488189"/>
+      <Point time="422400" value="0.456693"/>
+      <Point time="433919" value="0.417323"/>
+      <Point time="441599" value="0.385827"/>
+      <Point time="453120" value="0.354331"/>
+      <Point time="613440" value="0.669291"/>
+      <Point time="619200" value="0.590551"/>
+      <Point time="637440" value="0.511811"/>
+      <Point time="657600" value="0.433071"/>
+      <Point time="679680" value="0.354331"/>
+      <Point time="744960" value="0.669291"/>
+      <Point time="747840" value="0.590551"/>
+      <Point time="769920" value="0.511811"/>
+      <Point time="792000" value="0.433071"/>
+      <Point time="806400" value="0.354331"/>
+      <Point time="860160" value="0.669291"/>
+      <Point time="874560" value="0.559055"/>
+      <Point time="888000" value="0.456693"/>
+      <Point time="910080" value="0.354331"/>
+      <Point time="1074240" value="0.669291"/>
+      <Point time="1085760" value="0.606299"/>
+      <Point time="1095360" value="0.543307"/>
+      <Point time="1102080" value="0.480315"/>
+      <Point time="1111680" value="0.417323"/>
+      <Point time="1132800" value="0.354331"/>
+      <Point time="1183680" value="0.669291"/>
+      <Point time="1197120" value="0.606299"/>
+      <Point time="1214400" value="0.543307"/>
+      <Point time="1230720" value="0.480315"/>
+      <Point time="1244160" value="0.417323"/>
+      <Point time="1259520" value="0.354331"/>
+      <Point time="1371840" value="0.669291"/>
+      <Point time="1396800" value="0.614173"/>
+      <Point time="1416000" value="0.559055"/>
+      <Point time="1439040" value="0.511811"/>
+      <Point time="1461120" value="0.456693"/>
+      <Point time="1494720" value="0.401575"/>
+      <Point time="1516800" value="0.354331"/>
+    </AutomationList>
+    <Processor name="MIDI Track">
+      <Redirect placement="pre-fader"/>
+    </Processor>
+  </Route>
+  <Route name="Transcript" default-type="midi" id="route-markers" marker-track="yes">
+    <Marker time="0" label="A: welcome"/>
+    <Marker time="15360" label="A: to"/>
+    <Marker time="28800" label="A: the"/>
+    <Marker time="32640" label="A: future"/>
+    <Marker time="45120" label="A: of"/>
+    <Marker time="54719" label="A: conversation"/>
+    <Marker time="104640" label="A: can"/>
+    <Marker time="106560" label="A: machines"/>
+    <Marker time="124800" label="A: really"/>
+    <Marker time="144960" label="A: understand"/>
+    <Marker time="164160" label="A: how"/>
+    <Marker time="172800" label="A: we"/>
+    <Marker time="182400" label="A: speak"/>
+    <Marker time="219840" label="B: they"/>
+    <Marker time="224640" label="B: can"/>
+    <Marker time="233280" label="B: analyze"/>
+    <Marker time="255360" label="B: patterns"/>
+    <Marker time="276480" label="B: in"/>
+    <Marker time="291840" label="B: our"/>
+    <Marker time="297600" label="B: voice"/>
+    <Marker time="354240" label="B: not"/>
+    <Marker time="366720" label="B: just"/>
+    <Marker time="382080" label="B: what"/>
+    <Marker time="391680" label="B: we"/>
+    <Marker time="403200" label="B: say"/>
+    <Marker time="415680" label="B: but"/>
+    <Marker time="422400" label="B: how"/>
+    <Marker time="433919" label="B: we"/>
+    <Marker time="441599" label="B: say"/>
+    <Marker time="453120" label="B: it"/>
+    <Marker time="485759" label="A: but"/>
+    <Marker time="492480" label="A: is"/>
+    <Marker time="498240" label="A: not"/>
+    <Marker time="504960" label="A: that"/>
+    <Marker time="513599" label="A: just"/>
+    <Marker time="524160" label="A: statistics"/>
+    <Marker time="543360" label="A: with"/>
+    <Marker time="561600" label="A: extra"/>
+    <Marker time="574080" label="A: steps"/>
+    <Marker time="613440" label="B: the"/>
+    <Marker time="619200" label="B: patterns"/>
+    <Marker time="637440" label="B: reveal"/>
+    <Marker time="657600" label="B: emotional"/>
+    <Marker time="679680" label="B: states"/>
+    <Marker time="744960" label="B: rising"/>
+    <Marker time="747840" label="B: pitch"/>
+    <Marker time="769920" label="B: signals"/>
+    <Marker time="792000" label="B: a"/>
+    <Marker time="806400" label="B: question"/>
+    <Marker time="860160" label="B: falling"/>
+    <Marker time="874560" label="B: pitch"/>
+    <Marker time="888000" label="B: signals"/>
+    <Marker time="910080" label="B: certainty"/>
+    <Marker time="979199" label="A: so"/>
+    <Marker time="983040" label="A: you"/>
+    <Marker time="990720" label="A: are"/>
+    <Marker time="997440" label="A: mapping"/>
+    <Marker time="1009920" label="A: feelings"/>
+    <Marker time="1025280" label="A: to"/>
+    <Marker time="1033920" label="A: numbers"/>
+    <Marker time="1074240" label="B: think"/>
+    <Marker time="1085760" label="B: of"/>
+    <Marker time="1095360" label="B: it"/>
+    <Marker time="1102080" label="B: as"/>
+    <Marker time="1111680" label="B: prasadic"/>
+    <Marker time="1132800" label="B: midi"/>
+    <Marker time="1183680" label="B: every"/>
+    <Marker time="1197120" label="B: word"/>
+    <Marker time="1214400" label="B: becomes"/>
+    <Marker time="1230720" label="B: a"/>
+    <Marker time="1244160" label="B: musical"/>
+    <Marker time="1259520" label="B: note"/>
+    <Marker time="1301760" label="A: and"/>
+    <Marker time="1307520" label="A: you"/>
+    <Marker time="1310400" label="A: can"/>
+    <Marker time="1318080" label="A: play"/>
+    <Marker time="1328640" label="A: that"/>
+    <Marker time="1338240" label="A: music"/>
+    <Marker time="1350720" label="A: back"/>
+    <Marker time="1371840" label="B: or"/>
+    <Marker time="1396800" label="B: compose"/>
+    <Marker time="1416000" label="B: entirely"/>
+    <Marker time="1439040" label="B: new"/>
+    <Marker time="1461120" label="B: conversations"/>
+    <Marker time="1494720" label="B: from"/>
+    <Marker time="1516800" label="B: it"/>
+  </Route>
+</Session>
