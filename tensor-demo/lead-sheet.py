@@ -403,6 +403,10 @@ def write_midi_file(events, path):
         track2.append((0, bytes([0xB0, 71, cc71])))
         # CC11 (expression) = energy
         track2.append((0, bytes([0xB0, 11, min(127, e["energy"])])))
+        # CC99 (NRPN coarse) = pitch bend as continuous offset
+        pb = e.get("pitch_bend", 0)
+        pb_norm = max(0, min(127, int((pb / 8192) * 63 + 64)))
+        track2.append((0, bytes([0xB0, 99, pb_norm])))
     
     # Track 3: Transcript (lyrics meta-events)
     track3 = []
@@ -551,7 +555,8 @@ def main():
     
     # Save lead sheet JSON
     ls = {
-        "format": "lead-sheet-midi-v1",
+        "format": "lead-sheet-midi-v3",
+        "description": "lead-sheet-midi-v3 adds f0_hz + pitch_bend for continuous pitch (per Hermes 405B synthesis, 2026-06-09)",
         "generated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "word_count": len(events),
         "speakers": 2,
@@ -559,9 +564,9 @@ def main():
             {"name": "Transcript", "type": "text",
              "events": [{"t": e["t"], "word": e["word"], "spk": "A" if e["spk"]==0 else "B"} for e in events]},
             {"name": "Pitch Contour", "type": "midi_notes",
-             "events": [{"t": e["t"], "note": e["note"], "name": e["name"], "vel": e["vel"]} for e in events]},
+             "events": [{"t": e["t"], "note": e["note"], "name": e["name"], "vel": e["vel"], "f0_hz": e.get("f0_hz", round(440.0*(2.0**((e["note"]-69)/12)), 2)), "pitch_bend": e.get("pitch_bend", 0)} for e in events]},
             {"name": "Prosody CC", "type": "midi_cc",
-             "events": [{"t": e["t"], "cc74": e["t_pitch"]*64+64, "cc71": e["t_vol"]*64+64, "cc11": e["energy"]} for e in events]},
+             "events": [{"t": e["t"], "cc74": e["t_pitch"]*64+64, "cc71": e["t_vol"]*64+64, "cc11": e["energy"], "pitch_bend": e.get("pitch_bend", 0)} for e in events]},
             {"name": "Stage Directions", "type": "sys_ex",
              "events": [{"t": e["t"], "speaker_id": e["spk"], "role": e["role"]} for e in events]}
         ]

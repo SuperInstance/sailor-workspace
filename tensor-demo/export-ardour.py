@@ -143,6 +143,8 @@ def make_smf(track_name, speaker_id):
         note_off_tick = sec_to_ticks(t + dur)
         cc74_val = cc.get("cc74", 64)
         cc11_val = cc.get("cc11", 64)
+        pitch_bend = note.get("pitch_bend", 0)
+        f0_hz = note.get("f0_hz", 440.0)
 
         # Clamp CC values to 0-127
         cc74_val = max(0, min(127, cc74_val))
@@ -152,6 +154,9 @@ def make_smf(track_name, speaker_id):
         events.append((tick, 'cc', 74, cc74_val))
         # CC11 (expression / dynamics)
         events.append((tick, 'cc', 11, cc11_val))
+        # CC99 (NRPN pitch bend offset) — continuous pitch preservation
+        pb_norm = max(0, min(127, int((pitch_bend / 8192) * 63 + 64)))
+        events.append((tick, 'cc', 99, pb_norm))
         # Note On
         events.append((tick, 'note_on', pitch, vel))
         # Note Off

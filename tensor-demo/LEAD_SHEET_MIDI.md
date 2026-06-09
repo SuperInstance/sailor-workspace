@@ -233,6 +233,34 @@ This enables:
 - [x] Conversation graphing (pitch, energy, role)
 - [x] Markov composition with diversity
 
+### v3 Changelog (2026-06-09)
+
+Based on the Hermes 3 405B synthesis, the format evolved from v1→v3:
+
+**v3 adds: `f0_hz` + `pitch_bend` on every event**
+
+The blind spot discovered by the synthesis: MIDI notes are wrong for speech.
+Speech pitch is continuous glissando, not discrete semitones. Quantizing F0 to
+MIDI note numbers (C2–C6 destroys the prosodic information.
+
+```json
+{
+  "t": 1.234,
+  "note": 69,
+  "name": "A4",
+  "vel": 85,
+  "f0_hz": 441.2,      // exact fundamental frequency
+  "pitch_bend": 2       // cents offset from MIDI note
+}
+```
+
+This change unlocks:
+- **2032 Living Archive** — contour-based search on raw F0 trajectory
+- **2029 Lighting Designer** — artifact-free color temperature mapping
+- **2028 DAW Plugin** — MPE-compatible glissando for speech melody synths
+
+The format version is now `"lead-sheet-midi-v3"`.
+
 ### Phase 2: Real Audio (ready)
 - [ ] Install Basic Pitch on x86_64 (Codespaces) for audio→MIDI
 - [ ] Integrate faster-whisper with word timestamps into pipeline
