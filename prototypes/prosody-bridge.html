@@ -71,6 +71,9 @@
     <button id="btnStop" class="btn" disabled>■ Stop</button>
     <button id="btnGhostConnect" class="btn">👻 Connect Ghost Track</button>
     <span id="ghostStatus" class="status">⚪ Ghost Offline</span>
+    <button id="btnOpensmileConnect" class="btn">🎙️ Connect OpenSMILE</button>
+    <span id="opensmileStatus" class="status">⚪ Offline</span>
+    <span id="pipelineStatus" style="margin-left:12px;font-size:0.8em;"></span>
     <span id="status" class="status">⚪ Offline</span>
     <span class="bpm-display" id="bpmDisplay">—</span><span class="midi-clock">BPM</span>
   </div>
@@ -352,6 +355,15 @@ function processAudio() {
     
     state.lastNote = noteInt;
     state.lastActiveTime = performance.now();
+    
+    // Stream audio to OpenSMILE bridge if connected
+    if (opensmileConnected && opensmileWs && opensmileWs.readyState === WebSocket.OPEN) {
+      // Aim for ~100ms chunks (adjustable)
+      const targetChunkMs = 100;
+      const chunkSamples = Math.round(sampleRate * targetChunkMs / 1000);
+      const audioChunk = timeData.slice(0, Math.min(chunkSamples, timeData.length));
+      sendAudioToOpensmile(audioChunk);
+    }
   } else {
     f0Hz.textContent = '—';
     midiNote.textContent = '—';
@@ -556,6 +568,39 @@ let wsSessionId = null;
 let ghostConnected = false;
 const GHOST_URL = `ws://${location.hostname}:8767`;
 
+// ─── WebSocket OpenSMILE Bridge Client ───
+let opensmileWs = null;
+let opensmileConnected = false;
+const OPENSMILE_URL = `ws://${location.hostname}:8765`;
+let opensmileAudioQueue = [];
+let opensmileStreaming = false;
+
+// Pipeline chain: OpenSMILE(:8765) → Ghost(:8767) → tminus(:8768) → Conductor(:8769) → 16 agents(:2160-:2175)
+const PIPELINE_PORTS = {
+  openSmile: 8765,
+  prototype: 8766,
+  ghost: 8767,
+  tminus: 8768,
+  conductor: 8769,
+  agentChord: 2160,
+  agentScale: 2161,
+  agentVoicing: 2162,
+  agentTempo: 2163,
+  agentCc: 2164,
+  agentExpression: 2165,
+  agentDynamics: 2166,
+  agentPan: 2167,
+  agentModulation: 2168,
+  agentArp: 2169,
+  agentGroove: 2170,
+  agentVelocity: 2171,
+  agentFx: 2172,
+  agentRegister: 2173,
+  agentMelody: 2174,
+  agentBass: 2175,
+  piperTts: 8770
+};
+
 function connectGhostTrack() {
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.close();
@@ -689,8 +734,131 @@ function renderServerGhostTrack(predicted, actual) {
   }
 }
 
+// ─── OpenSMILE Bridge Client ───
+function connectOpensmile() {
+  if (opensmileWs && opensmileWs.readyState === WebSocket.OPEN) {
+    opensmileWs.close();
+    return;
+  }
+  try {
+    opensmileWs = new WebSocket(OPENSMILE_URL);
+    opensmileWs.binaryType = 'arraybuffer';
+    
+    opensmileWs.onopen = () => {
+      opensmileConnected = true;
+      $('opensmileStatus').textContent = '🎙️ OpenSMILE Online';
+      $('opensmileStatus').className = 'status recording';
+      $('btnOpensmileConnect').textContent = '🔌 Disconnect OpenSMILE';
+      opensmileStreaming = true;
+      logEvent('✅ OpenSMILE bridge connected on :8765');
+      
+      // Pipeline status
+      updatePipelineStatus();
+      // Periodic pipeline health check
+      if (pipelineStatusInterval) clearInterval(pipelineStatusInterval);
+      pipelineStatusInterval = setInterval(() => updatePipelineStatus(), 10000);
+    };
+    
+    opensmileWs.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.type === 'welcome') {
+          logEvent(`OpenSMILE: ${msg.features} features`);
+        } else if (msg.type === 'midi') {
+          // Display features from OpenSMILE
+          if (msg.features) {
+            const f0 = msg.features.f0_hz || 0;
+            $('opensmileFeatures').textContent = `F0=${f0.toFixed(1)}Hz L=${msg.features.loudness?.toFixed(2) || '?'} HNR=${msg.features.hnr?.toFixed(1) || '?'}`;
+          }
+          if (msg.cc) {
+            $('opensmileCC').textContent = `CC74=${msg.cc.cc_74||0} CC71=${msg.cc.cc_71||0} CC7=${msg.cc.cc_7||0}`;
+          }
+          // Pipeline is flowing through Ghost → tminus → conductor
+          updatePipelineStatus('flowing');
+        }
+      } catch (e) {}
+    };
+    
+    opensmileWs.onerror = () => {
+      logEvent('❌ OpenSMILE connection error (is :8765 running?)');
+      disconnectOpensmile();
+    };
+    
+    opensmileWs.onclose = () => disconnectOpensmile();
+  } catch (e) {
+    logEvent(`❌ OpenSMILE connect failed: ${e.message}`);
+  }
+}
+
+function disconnectOpensmile() {
+  opensmileConnected = false;
+  opensmileStreaming = false;
+  try { if (opensmileWs) opensmileWs.close(); } catch(e) {}
+  opensmileWs = null;
+  $('opensmileStatus').textContent = '⚪ Offline';
+  $('opensmileStatus').className = 'status';
+  $('btnOpensmileConnect').textContent = '🎙️ Connect OpenSMILE';
+  $('opensmileFeatures').textContent = '';
+  $('opensmileCC').textContent = '';
+  if (pipelineStatusInterval) { clearInterval(pipelineStatusInterval); pipelineStatusInterval = null; }
+  updatePipelineStatus('offline');
+}
+
+function sendAudioToOpensmile(samples) {
+  if (!opensmileWs || opensmileWs.readyState !== WebSocket.OPEN) return;
+  // Send as JSON audio message (float32 samples)
+  opensmileWs.send(JSON.stringify({
+    type: 'audio',
+    sample_rate: state.audioCtx ? state.audioCtx.sampleRate : 48000,
+    samples: Array.from(samples)
+  }));
+}
+
+// ─── Pipeline Status ───
+const pipelineDots = { openSmile: false, ghost: false, tminus: false, conductor: false, agents: false };
+let pipelineStatusInterval = null;
+
+async function updatePipelineStatus(state) {
+  const el = $('pipelineStatus');
+  if (state === 'offline') {
+    el.textContent = '⚪ Pipeline offline';
+    el.style.color = '#666';
+    return;
+  }
+  if (state === 'flowing') {
+    el.textContent = '🔵 Data flowing: OpenSMILE→Ghost→tminus→Conductor→16 agents';
+    el.style.color = '#4ade80';
+    return;
+  }
+  // Health check ping
+  if (!opensmileConnected && !ghostConnected) {
+    el.textContent = '⚪ Connect OpenSMILE or Ghost to start pipeline';
+    el.style.color = '#666';
+    return;
+  }
+  try {
+    const results = [];
+    if (opensmileConnected) results.push('✅OS');
+    if (ghostConnected) results.push('✅GT');
+    // Quick health check on conductor
+    try {
+      const resp = await fetch(`http://${location.hostname}:8769/health`);
+      if (resp.ok) results.push('✅C9');
+    } catch { results.push('❌C9'); }
+    // Quick health check on tminus
+    try {
+      const resp = await fetch(`http://${location.hostname}:8768/health`);
+      if (resp.ok) results.push('✅T8');
+    } catch { results.push('❌T8'); }
+    el.textContent = `Pipeline: ${results.join(' ')}`;
+    el.style.color = results.every(r => r.startsWith('✅')) ? '#4ade80' : '#fbbf24';
+  } catch {}
+}
+
+// OpenSMILE connect button
+$('btnOpensmileConnect').onclick = connectOpensmile;
+
 // Connect ghost track button
-$('btnGhostConnect').onclick = connectGhostTrack;
 
 btnStart.onclick = async () => {
   try {
