@@ -1,0 +1,72 @@
+{
+  "signature": {
+    "f0_hz": 194.1,
+    "f0_stability": 61.8,
+    "voiced_pct": 58,
+    "loudness_mu": 0.9314988255500793,
+    "hnr_mu": 4.3622331619262695,
+    "jitter_mu": 0.008727842941880226,
+    "alpha_ratio_mu": -8.067047119140625,
+    "spectral_flux_mu": 0.4413643181324005,
+    "wpm": 185.6,
+    "gap_mean": 0.338,
+    "word_dur": 0.278
+  },
+  "acoustic": {
+    "F0semitoneFrom27.5Hz_sma3nz": {
+      "mu": 19.14948844909668,
+      "sd": 16.750905990600586
+    },
+    "Loudness_sma3": {
+      "mu": 0.9314988255500793,
+      "sd": 0.627446711063385
+    },
+    "HNRdBACF_sma3nz": {
+      "mu": 4.3622331619262695,
+      "sd": 4.615354537963867
+    },
+    "jitterLocal_sma3nz": {
+      "mu": 0.008727842941880226,
+      "sd": 0.0249046441167593
+    },
+    "alphaRatio_sma3": {
+      "mu": -8.067047119140625,
+      "sd": 11.157604217529297
+    },
+    "spectralFlux_sma3": {
+      "mu": 0.4413643181324005,
+      "sd": 0.3630938231945038
+    },
+    "f0_mean_hz": 194.1,
+    "f0_std_hz": 61.8,
+    "voiced_pct": 58
+  },
+  "conversation": {
+    "words": 1856,
+    "wpm": 185.6,
+    "gap_mean": 0.338,
+    "word_dur_mean": 0.278,
+    "total_time_s": 600.0
+  },
+  "words": [
+    {
+      "word": "At",
+      "start": 0.0,
+      "end": 0.42,
+      "prob": 0.6398884057998657
+    },
+    {
+      "word": "a",
+      "start": 0.42,
+      "end": 0.56,
+      "prob": 0.9945290684700012
+    },
+    {
+      "word": "rural",
+      "start": 0.56,
+      "end": 0.84,
+      "prob": 0.7718654870986938
+    }
+  ],
+  "wordcount": 1856
+}

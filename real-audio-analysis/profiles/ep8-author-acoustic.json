@@ -1,0 +1,16 @@
+{
+  "f0_mean_hz": 151.7,
+  "f0_std_hz": 87.9,
+  "f0_min_hz": 55.2,
+  "f0_max_hz": 997.6,
+  "voiced_pct": 42,
+  "loudness_mean": 0.8375,
+  "loudness_std": 0.5852,
+  "hnr_mean": 2.45,
+  "hnr_std": 3.69,
+  "jitter_mean": 0.008468,
+  "alpha_ratio": -9.327,
+  "spectral_flux": 0.4951,
+  "frames": 59920,
+  "duration_s": 600.0
+}
