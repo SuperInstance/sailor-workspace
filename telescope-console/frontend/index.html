@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔭 Telescope Console</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="telescope-header">
+        <div class="telescope-title">
+            Telescope Console
+        </div>
+        <div class="header-actions">
+            <button class="btn" id="resetBtn">🔄 Reset Pipeline</button>
+            <button class="btn btn-success" id="runBtn">▶️  Run Full Pipeline</button>
+        </div>
+    </header>
+
+    <div class="main-grid">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>System Status</h3>
+                <div class="status-item">
+                    <span>Bridge Connection:</span>
+                    <span id="bridgeStatus" class="status-value offline">Offline</span>
+                </div>
+                <div class="status-item">
+                    <span>Frames Processed:</span>
+                    <span id="frameCount" class="status-value">0</span>
+                </div>
+                <div class="status-item">
+                    <span>Active Clients:</span>
+                    <span id="clientCount" class="status-value">0</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Drop Audio Here</h3>
+                <div class="drop-area" id="dropArea">
+                    <h4>📁 Drag & Drop Audio File</h4>
+                    <p>WAV, MP3, FLAC — any audio format</p>
+                    <input type="file" id="fileInput" accept="audio/*" hidden>
+                </div>
+                <button class="btn" style="margin-top: 1rem;" id="browseBtn">🗂️ Browse Files</button>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Quick Actions</h3>
+                <button class="btn" id="testBtn">🎤 Test with Test Tone</button>
+                <button class="btn" id="microBtn">🎙️ Use Microphone</button>
+            </div>
+        </aside>
+
+        <!-- Central Pipeline Canvas -->
+        <main class="canvas-area">
+            <h2>📊 Pipeline Visualizer (Telescope Mode)</h2>
+            <div class="pipeline-controls">
+                <button class="btn">Audio In →</button>
+                <button class="btn">Source Separation →</button>
+                <button class="btn">Feature Extraction →</button>
+                <button class="btn">Persona Profile →</button>
+                <button class="btn">MIDI Output</button>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <h3>Live Feature Visualization</h3>
+                <div class="feature-meter">
+                    <div class="meter-label">
+                        <span>Loudness</span>
+                        <span id="loudnessVal">0.00</span>
+                    </div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="loudnessMeter" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="feature-meter">
+                    <div class="meter-label">
+                        <span>Fundamental Frequency (Hz)</span>
+                        <span id="f0Val">0.0</span>
+                    </div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="f0Meter" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="feature-meter">
+                    <div class="meter-label">
+                        <span>Spectral Centroid</span>
+                        <span id="spectVal">0.0</span>
+                    </div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="spectMeter" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="feature-meter">
+                    <div class="meter-label">
+                        <span>MIDI CC7 (Volume)</span>
+                        <span id="cc7Val">0</span>
+                    </div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="cc7Meter" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Output Panel -->
+        <aside class="output-area">
+            <h3>📋 Output Log</h3>
+            <div class="output-log" id="logOutput">
+                <pre>Ready. Drag an audio file or click test to start.
+
+</pre>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Generated Outputs</h3>
+                <div id="outputFiles" style="font-size: 0.9rem; color: var(--text-muted);">
+                    <p>No outputs yet</p>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Quality Report</h3>
+                <div id="qualityReport" style="font-size: 0.85rem; color: var(--text-muted);">
+                    <p>Pipeline idle</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
