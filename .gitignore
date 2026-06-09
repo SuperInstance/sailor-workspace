@@ -58,3 +58,19 @@ ternary-fleet/
 /ternary-visualizer
 /voxelworks
 .aider*
+
+# Model files (large, runtime downloads)
+*.onnx
+*.bin
+*.pt
+
+# Session runtime data
+ghost-track-bridge/sessions/
+tensor-output/podcast_*
+tensor-output/*.wav
+demo-output/
+
+# Python compiled
+__pycache__/
+*.pyc
+.venv/

@@ -3,8 +3,9 @@
     "email": null,
     "calendar": null,
     "weather": null,
-    "system": 1749344306,
-    "disk_cleanup": 1749344306,
-    "vessel_gc": 1749344306
-  }
+    "system": 1749337080,
+    "disk_cleanup": 1749337080,
+    "vessel_gc": 1749337080
+  },
+  "lastHeartbeat": 1749337080
 }
