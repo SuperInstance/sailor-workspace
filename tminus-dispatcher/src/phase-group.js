@@ -83,14 +83,18 @@ class PhaseGroupManager {
 
   /**
    * Record that a cue was completed for an alignment point.
+   * Tracks unique agents, not total cues — prevents premature advance
+   * when one agent completes multiple cues before others complete any.
    * Returns the alignment point if all agents in group have completed.
    */
-  recordCueCompleted(groupName) {
+  recordCueCompleted(groupName, agentId) {
     const group = this.ensureGroup(groupName);
     const point = group.last_alignment;
     if (!point) return null;
-    point.cues_completed++;
-    if (point.cues_completed >= point.agent_count && point.agent_count > 0) {
+    // Track unique agents to avoid one agent's 2nd cue triggering advance
+    if (!point.completed_agents) point.completed_agents = new Set();
+    point.completed_agents.add(agentId);
+    if (point.completed_agents.size >= point.agent_count && point.agent_count > 0) {
       group.state = 'completed';
       return point;
     }

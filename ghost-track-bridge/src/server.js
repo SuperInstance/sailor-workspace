@@ -14,7 +14,7 @@
 
 import { WebSocketServer } from 'ws';
 import { createServer } from 'http';
-import { readFileSync, existsSync, mkdirSync, appendFileSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import Reharmonizer from './reharmonizer.js';
@@ -272,7 +272,7 @@ class SessionManager {
     const data = session.engine.getSessionData();
     const filename = `session-${session.id}-${new Date().toISOString().slice(0, 19).replace(/:/g,'-')}.json`;
     const path = join(SESSIONS_DIR, filename);
-    appendFileSync(path, JSON.stringify(data, null, 2));
+    appendFile(path, JSON.stringify(data, null, 2)).catch(() => {});
     console.log(`  📝 Session captured: ${filename}`);
   }
 }

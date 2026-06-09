@@ -346,7 +346,7 @@ def write_midi_file(events, path):
     # Header
     midi.extend(b'MThd')
     midi.extend(struct.pack('>I', 6))  # header length
-    midi.extend(struct.pack('>HHH', 0, 4, TICKS_PER_BEAT))  # format 0, 4 tracks
+    midi.extend(struct.pack('>HHH', 1, 4, TICKS_PER_BEAT))  # format 1, 4 tracks
     
     def write_track(ticks_data):
         """Write a MIDI track chunk."""
@@ -395,11 +395,11 @@ def write_midi_file(events, path):
         t = time_to_ticks(e["t"])
         delta = t - prev_t
         prev_t = t
-        # CC74 (cutoff) = ternary pitch
-        cc74 = e["t_pitch"] * 64 + 64
+        # CC74 (cutoff) = ternary pitch, clamped 0-127
+        cc74 = min(127, e["t_pitch"] * 64 + 64)
         track2.append((delta, bytes([0xB0, 74, cc74])))
-        # CC71 (resonance) = ternary volume
-        cc71 = e["t_vol"] * 64 + 64
+        # CC71 (resonance) = ternary volume, clamped 0-127
+        cc71 = min(127, e["t_vol"] * 64 + 64)
         track2.append((0, bytes([0xB0, 71, cc71])))
         # CC11 (expression) = energy
         track2.append((0, bytes([0xB0, 11, min(127, e["energy"])])))
@@ -425,9 +425,21 @@ def write_midi_file(events, path):
         t = time_to_ticks(e["t"])
         delta = t - prev_t
         prev_t = t
-        # SysEx: F0 7D (educational use) 00 (SIPR) spk_id role agreement F7
-        sysex = bytes([0xF0, 0x7D, 0x00, e["spk"], e["role"] + 1, 0x00, 0xF7])
-        track4.append((delta, sysex))
+        # SysEx: F0 <len_VLQ> F0 7D 00 spk_id role+1 00 F7
+        # SMF format: status F0, then VLQ length (covers all remaining bytes including F7)
+        payload = bytes([0xF0, 0x7D, 0x00, e["spk"], e["role"] + 1, 0x00, 0xF7])
+        payload_len = len(payload)
+        if payload_len < 128:
+            track4.append((delta, bytes([0xF0, payload_len]) + payload))
+        else:
+            vlq = bytearray()
+            v = payload_len
+            while v > 0:
+                vlq.insert(0, (v & 0x7F) | (0x80 if vlq else 0))
+                v >>= 7
+            if not vlq:
+                vlq.append(0)
+            track4.append((delta, bytes([0xF0]) + bytes(vlq) + payload))
     
     for track_data in [track1, track2, track3, track4]:
         # End of track

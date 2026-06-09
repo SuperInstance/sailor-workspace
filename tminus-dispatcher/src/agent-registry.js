@@ -1,4 +1,4 @@
-const { AGENT_STATES, CONTEXT_DEPTH_FACTOR, NORMALIZED_BEAT_MS, HEARTBEAT_TIMEOUT_MS } = require('./constants');
+const { AGENT_STATES, VALID_TRANSITIONS, CONTEXT_DEPTH_FACTOR, NORMALIZED_BEAT_MS, HEARTBEAT_TIMEOUT_MS } = require('./constants');
 
 class AgentRegistry {
   constructor() {
@@ -65,6 +65,11 @@ class AgentRegistry {
   transitionTo(agentId, newState) {
     const agent = this._agents.get(agentId);
     if (!agent) return false;
+    const allowed = VALID_TRANSITIONS[agent.state];
+    if (allowed && !allowed.includes(newState)) {
+      console.warn(`[agent-registry] Invalid transition: ${agent.state} -> ${newState} for ${agentId}`);
+      return false;
+    }
     agent.state = newState;
     return true;
   }

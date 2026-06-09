@@ -4,7 +4,7 @@ const { AgentRegistry } = require('./agent-registry');
 const { CueScheduler } = require('./cue-scheduler');
 const { PhaseGroupManager } = require('./phase-group');
 const { BeatEngine } = require('./beat-engine');
-const { envelope } = require('./ws-handler');
+const { envelope, handleMessage } = require('./ws-handler');
 
 class TminusDispatcher extends EventEmitter {
   constructor() {
@@ -67,7 +67,6 @@ class TminusDispatcher extends EventEmitter {
     ws._tminusConnId = connId;
 
     ws.on('message', (raw) => {
-      const { handleMessage } = require('./ws-handler');
       handleMessage(this, ws, connId, raw.toString());
     });
 
